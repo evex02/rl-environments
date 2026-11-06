@@ -8,18 +8,21 @@ class AdditionEnv:
     def __init__(self, seed=0):
         self.rng = random.Random(seed)
         self.correct = None
+        self.done = True  # no episode is running yet
 
     def reset(self):
         """Start a new episode: pick a fresh question and return it."""
         a = self.rng.randint(10, 99)
         b = self.rng.randint(10, 99)
         self.correct = a + b
+        self.done = False
         return f"What is {a} + {b}? End your reply with 'Answer: <number>'."
 
     def step(self, reply):
-        """The AI replies; return the reward."""
-        if self.correct is None:
-            raise RuntimeError("Call reset() first")
+        """The AI replies; return the reward. Only one reply per episode."""
+        if self.done:
+            raise RuntimeError("No active episode: call reset() first")
+        self.done = True  # the episode ends after one reply
         matches = re.findall(r"answer:\s*(\S+)", reply, flags=re.IGNORECASE)
         if not matches:
             return 0.0

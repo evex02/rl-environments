@@ -1,3 +1,4 @@
+import pytest
 from addition_env import AdditionEnv
 
 
@@ -21,3 +22,17 @@ def test_wrong_reply_gets_zero():
 
 def test_same_seed_gives_same_question():
     assert AdditionEnv(seed=7).reset() == AdditionEnv(seed=7).reset()
+
+
+def test_cannot_answer_twice_in_one_episode():
+    env = AdditionEnv(seed=1)
+    env.reset()
+    env.step("Answer: 0")
+    with pytest.raises(RuntimeError):
+        env.step(f"Answer: {env.correct}")
+
+
+def test_cannot_answer_before_reset():
+    env = AdditionEnv(seed=1)
+    with pytest.raises(RuntimeError):
+        env.step("Answer: 4")
