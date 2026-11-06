@@ -1,5 +1,5 @@
 def reward(answer):
-    """Our first referee: scores an answer to 'What is 2 + 2?'"""
-    if answer.strip() == "4":
-        return 1.0
-    return 0.0
+    words = answer.strip().rstrip(".").split()
+    if not words:
+        return 0.0  # empty answer
+    return 1.0 if words[-1] == "4" else 0.0
