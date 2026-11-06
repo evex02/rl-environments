@@ -17,3 +17,9 @@ Difficulty	Reward	What it means for training
 3-digit	    0.75	Useful
 4-digit	    0.55	Useful, close to the ideal
 5-digit	    0.10	Almost too hard, since most replies are wrong
+
+## Known weaknesses of run_code.py (not yet a sandbox)
+- Untrusted code can read, change or delete my files.
+- It can use the network.
+- Output is only cut to 2000 characters after it has all been collected, so a program that prints endlessly could use up memory.
+- Fix plan: run it inside a Docker container with no network, a read-only filesystem and memory limits.
