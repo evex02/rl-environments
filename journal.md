@@ -23,3 +23,10 @@ Difficulty	Reward	What it means for training
 - It can use the network.
 - Output is only cut to 2000 characters after it has all been collected, so a program that prints endlessly could use up memory.
 - Fix plan: run it inside a Docker container with no network, a read-only filesystem and memory limits.
+
+## Sandbox v1: Docker (run_code_docker.py)
+- Fixed: file access, network access, writing outside /tmp, running as root, memory use, runaway loops.
+- Tests: scratch/test_run_code_docker.py (8 attack tests).
+- Lesson: killing the host-side command does not stop the container. The time limit has to run inside the container, with a cleanup step as backup.
+- Still untested: a program that prints huge amounts of output, a fork bomb, and a program that fills /tmp.
+- Rule: AI-written code only goes through run_python_sandboxed, never run_python.
