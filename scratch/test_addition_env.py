@@ -1,3 +1,4 @@
+import re
 import pytest
 from addition_env import AdditionEnv
 
@@ -36,3 +37,9 @@ def test_cannot_answer_before_reset():
     env = AdditionEnv(seed=1)
     with pytest.raises(RuntimeError):
         env.step("Answer: 4")
+
+def test_digits_controls_size_of_numbers():
+    env = AdditionEnv(seed=1, digits=4)
+    question = env.reset()
+    numbers = re.findall(r"\d+", question)[:2]
+    assert all(len(n) == 4 for n in numbers)

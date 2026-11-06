@@ -3,17 +3,22 @@ import re
 
 
 class AdditionEnv:
-    """A tiny environment: the AI is asked to add two numbers."""
+    """A tiny environment: the AI is asked to add two numbers.
 
-    def __init__(self, seed=0):
+    digits controls difficulty: 2 means numbers from 10 to 99, and so on.
+    """
+
+    def __init__(self, seed=0, digits=2):
         self.rng = random.Random(seed)
+        self.low = 10 ** (digits - 1)
+        self.high = 10**digits - 1
         self.correct = None
         self.done = True  # no episode is running yet
 
     def reset(self):
         """Start a new episode: pick a fresh question and return it."""
-        a = self.rng.randint(10, 99)
-        b = self.rng.randint(10, 99)
+        a = self.rng.randint(self.low, self.high)
+        b = self.rng.randint(self.low, self.high)
         self.correct = a + b
         self.done = False
         return f"What is {a} + {b}? End your reply with 'Answer: <number>'."
