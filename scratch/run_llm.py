@@ -4,6 +4,7 @@ import re
 from openai import OpenAI
 
 from addition_env import AdditionEnv
+from stats_utils import wilson_interval
 
 # Ollama listens on this address on your own computer.
 client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
@@ -61,6 +62,12 @@ def evaluate(player, episodes=20, seed=0, digits=2):
 if __name__ == "__main__":
     model = "llama3.2:1b"
     player = make_llm_player(model, FORMAT_REMINDER)
-    for digits in [2, 3, 4, 5]:
-        reward, maths, fmt = evaluate(player, digits=digits)
-        print(f"{digits}-digit numbers: reward {reward:.2f} | maths right {maths:.2f} | format followed {fmt:.2f}")
+    episodes = 50
+    for digits in [3, 4]:
+        reward, maths, fmt = evaluate(player, episodes=episodes, digits=digits)
+        low, high = wilson_interval(round(reward * episodes), episodes)
+        print(
+            f"{digits}-digit: reward {reward:.2f} "
+            f"(95% interval {low:.2f} to {high:.2f}) | "
+            f"maths right {maths:.2f} | format followed {fmt:.2f}"
+        )

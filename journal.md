@@ -10,3 +10,10 @@
 - Without a format reminder, llama3.2:1b followed the 'Answer:' format in 2/20 replies (reward 0.10).
 - With a reminder, 20/20 (reward 1.00). Maths was right in all cases both times.
 - Takeaway: the prompt is part of the environment and must be documented.
+
+## Difficulty Results
+Difficulty	Reward	What it means for training
+2-digit	    1.00    Too easy, nothing to learn from
+3-digit	    0.75	Useful
+4-digit	    0.55	Useful, close to the ideal
+5-digit	    0.10	Almost too hard, since most replies are wrong
