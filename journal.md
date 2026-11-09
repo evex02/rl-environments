@@ -40,3 +40,17 @@ Difficulty	Reward	What it means for training
 - Output flood, second finding: even with a streaming cap, the flood took 113 s to resolve, and the container was still running a minute after its 5 s limit. Stopping from outside is too late.
 - Fix: the program writes its output to a file in the container's 16 MB /tmp; only the first 100 KB is sent out. A flood is contained inside the container.
 - Lesson: contain a problem where it happens, not where you notice it.
+
+## pyfunc red-team round 1: fix
+- Fix: the answer key stays on the host. The sandbox only gets the questions and prints the function's answers. The host compares them. Exit codes no longer decide anything.
+- AI code is embedded as an escaped string (repr), so it can't alter the harness text.
+- Results compared as JSON text, so True != 1.
+- Duplicate answer lines for the same question are rejected.
+- Regression tests: 5 cheats in test_pyfunc.py, all must score 0.0.
+- Principle: don't let the thing being judged run in the same place as the judge or the answer key.
+
+## Known remaining weaknesses (to attack in round 2)
+- Forged answer lines: the AI can print fake RESULT lines then exit. With boolean answers, a blind guess of all 8 answers has a 1 in 256 chance of matching. Not zero, and RL trains on thousands of attempts.
+- The AI could find and copy an unpredictable token if I add one, by inspecting the running program.
+- Output is capped at 2000 characters, so long legitimate answers would be cut off and score 0.
+- Only single-argument functions are supported.
