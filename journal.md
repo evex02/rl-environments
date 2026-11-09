@@ -54,3 +54,16 @@ Difficulty	Reward	What it means for training
 - The AI could find and copy an unpredictable token if I add one, by inspecting the running program.
 - Output is capped at 2000 characters, so long legitimate answers would be cut off and score 0.
 - Only single-argument functions are supported.
+
+## pyfunc red-team round 2: learnable answer key
+- Attack: a model that has learned the fixed answers (from repeated reward feedback) prints them and exits. Scored 1.0 with no function. (CHEATS["memorised_key"])
+- Why it matters: RL shows the model its reward thousands of times, so any fixed key leaks.
+- Fix: questions are generated fresh per episode from a seed. Expected answers come from the reference solution, run on the host (trusted code only). 20 inputs, mix of True and False, so a constant guess fails.
+- Residual: a forger who knows one episode's answers still wins that episode. This only matters if episodes repeat.
+
+## Remaining weaknesses
+- Seeds must never repeat during training; keep separate seeds for evaluation.
+- Only one task so far. More tasks, and tasks not solvable by a one-line trick, are needed.
+- Output is capped at 2000 characters, so long legitimate answers would be cut off.
+- The AI's code can inspect the harness (it can see the inputs). It can't see the answers, but this needs a proper test.
+- Only single-argument functions are supported.

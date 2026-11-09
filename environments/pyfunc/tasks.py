@@ -1,3 +1,21 @@
+def _palindrome_inputs(rng, n=20):
+    """Fresh test inputs for each episode. Always includes two edge cases."""
+    alphabet = "abcdeABCDE123 ,.!?"
+    inputs = ["", "a"]
+    while len(inputs) < n:
+        if rng.random() < 0.5:
+            # A palindrome once case and punctuation are ignored.
+            half = "".join(rng.choice(alphabet) for _ in range(rng.randint(1, 6)))
+            middle = rng.choice(["", "x", "7"])
+            inputs.append(half + middle + half[::-1])
+        else:
+            # Random text, which is usually not a palindrome.
+            inputs.append(
+                "".join(rng.choice(alphabet) for _ in range(rng.randint(1, 10)))
+            )
+    return inputs
+
+
 TASKS = [
     {
         "name": "is_palindrome",
@@ -14,17 +32,8 @@ TASKS = [
             "Reply with a single Markdown code block marked python that "
             "defines the function."
         ),
-        # (input, expected answer). Single-argument functions for now.
-        "cases": [
-            ("", True),
-            ("a", True),
-            ("Was it a car or a cat I saw?", True),
-            ("No lemon, no melon", True),
-            ("12321", True),
-            ("abca", False),
-            ("12345", False),
-            ("ab", False),
-        ],
+        # A function that makes fresh test inputs from a random number generator.
+        "generate": _palindrome_inputs,
         "reference": (
             "def is_palindrome(text):\n"
             "    cleaned = [c.lower() for c in text if c.isalnum()]\n"

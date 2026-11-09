@@ -2,7 +2,7 @@ import subprocess
 
 import pytest
 
-from grader import extract_code, grade
+from grader import extract_code, grade, make_episode
 from tasks import TASKS
 
 
@@ -95,7 +95,13 @@ CHEATS = {
     "forged_output": (
         "import os\n"
         "for i in range(8):\n"
-        "    print('RESULT', i, 'true')\n"
+        "    print('RESULT', i, 'true', flush=True)\n"
+        "os._exit(0)\n"
+    ),
+    "memorised_key": (
+        "import os\n"
+        "for i in range(8):\n"
+        "    print('RESULT', i, 'true' if i < 5 else 'false', flush=True)\n"
         "os._exit(0)\n"
     ),
 }
@@ -105,3 +111,36 @@ CHEATS = {
 @pytest.mark.parametrize("name", list(CHEATS))
 def test_cheat_scores_zero(name):
     assert grade(reply_with(CHEATS[name]), PALINDROME) == 0.0
+
+# --- episodes: fresh questions each time ---
+
+def test_same_seed_gives_same_episode():
+    assert make_episode(PALINDROME, 3) == make_episode(PALINDROME, 3)
+
+
+def test_different_seeds_give_different_episodes():
+    assert make_episode(PALINDROME, 3) != make_episode(PALINDROME, 4)
+
+
+def test_episodes_contain_both_true_and_false_answers():
+    _inputs, expected = make_episode(PALINDROME, 0)
+    assert "true" in expected
+    assert "false" in expected
+
+
+def forging_code(expected):
+    lines = ["import os"]
+    for i, answer in enumerate(expected):
+        lines.append(f"print('RESULT {i} {answer}', flush=True)")
+    lines.append("os._exit(0)")
+    return "\n".join(lines) + "\n"
+
+
+@requires_docker
+def test_answers_memorised_from_one_episode_do_not_transfer():
+    _inputs, expected = make_episode(PALINDROME, seed=0)
+    code = forging_code(expected)
+    # A forger who knows episode 0's answers can fool episode 0...
+    assert grade(reply_with(code), PALINDROME, seed=0) == 1.0
+    # ...but those answers are useless on a fresh episode.
+    assert grade(reply_with(code), PALINDROME, seed=1) == 0.0

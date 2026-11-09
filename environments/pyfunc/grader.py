@@ -1,4 +1,5 @@
 import json
+import random
 import re
 
 from run_code_docker import run_python_sandboxed
@@ -30,9 +31,22 @@ def extract_code(reply):
     return blocks[-1]
 
 
-def build_program(code, task):
+def make_episode(task, seed):
+    """Build one episode: fresh inputs, plus the expected answers.
+
+    The expected answers come from OUR reference solution, run here on the
+    host. That is safe only because we wrote it. AI code never runs here.
+    """
+    inputs = task["generate"](random.Random(seed))
+    namespace = {}
+    exec(task["reference"], namespace)
+    reference = namespace[task["function"]]
+    expected = [json.dumps(reference(x)) for x in inputs]
+    return inputs, expected
+
+
+def build_program(code, task, inputs):
     """Combine the AI's code (as plain text) with the question-asking harness."""
-    inputs = [case[0] for case in task["cases"]]
     header = (
         f"SOLUTION = {code!r}\n"
         f"FUNC = {task['function']!r}\n"
@@ -54,17 +68,17 @@ def parse_results(output):
     return results
 
 
-def grade(reply, task):
-    """Return 1.0 only if every answer matches the answer key, else 0.0."""
+def grade(reply, task, seed=0):
+    """Return 1.0 only if every answer matches the expected answers."""
     code = extract_code(reply)
     if code is None:
         return 0.0
-    _ok, output = run_python_sandboxed(build_program(code, task), timeout=5)
+    inputs, expected = make_episode(task, seed)
+    _ok, output = run_python_sandboxed(build_program(code, task, inputs), timeout=5)
     results = parse_results(output)
-    cases = task["cases"]
-    if results is None or len(results) != len(cases):
+    if results is None or len(results) != len(expected):
         return 0.0
-    for index, (_question, expected) in enumerate(cases):
-        if results.get(index) != json.dumps(expected):
+    for index, want in enumerate(expected):
+        if results.get(index) != want:
             return 0.0
     return 1.0
