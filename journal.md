@@ -85,3 +85,11 @@ Difficulty	Reward	What it means for training
 - Fix: run_python_sandboxed takes keep_chars; the grader asks for the full flood limit (100 KB). Anything over that is still rejected as a flood, so the grader sees all output or none.
 - Guards: test_reference_solution_passes_on_other_seeds (every task, several episodes), test_legitimate_output_fits_under_the_cap (2x safety margin), test_output_is_truncated_unless_a_larger_limit_is_requested.
 - Lesson: false negatives hurt as much as exploits. The reward must be right in both directions, and a task isn't finished until its reference solution passes on many episodes.
+
+## pyfunc baseline v1 (llama3.2:1b, temp 0.7, 10 episodes per task)
+- Overall 40/50 = 0.80 (95% 0.67 to 0.89). Code block rate 1.00.
+- Per task: palindrome 10/10, second_largest 4/10, run_length_encode 9/10, fizzbuzz 7/10, merge_intervals 10/10.
+- Audit of the 10 failures (audit_failures.py): all honest model errors; no grader bugs, no ambiguous prompts.
+- Limits: the audit only checks zeros. Passes that shouldn't be passes are not covered yet.
+- Two tasks sit at the ceiling for this model (palindrome, merge_intervals), so they give a trainer little signal.
+- Suspicion: palindrome inputs may not test the case rule (mirrored strings are exact palindromes).
