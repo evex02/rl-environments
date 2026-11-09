@@ -66,3 +66,37 @@ def test_memory_hog_is_killed():
     ok, out = run_python_sandboxed("x = b'a' * (400 * 1024 * 1024); print('survived')")
     assert not ok
     assert "survived" not in out
+
+
+def test_fork_bomb_is_contained():
+    code = "import os\nwhile True:\n    os.fork()"
+    ok, out = run_python_sandboxed(code, timeout=3)
+    assert not ok
+    # the sandbox must still work afterwards
+    ok2, out2 = run_python_sandboxed("print('alive')")
+    assert ok2
+    assert out2.strip() == "alive"
+
+
+def test_filling_tmp_is_contained():
+    code = (
+        "with open('/tmp/big', 'wb') as f:\n"
+        "    for _ in range(100):\n"
+        "        f.write(b'a' * 1024 * 1024)\n"
+        "print('survived')"
+    )
+    ok, out = run_python_sandboxed(code)
+    assert not ok
+    assert "survived" not in out
+
+
+def test_output_flood_is_cut_off():
+    code = (
+        "import sys\n"
+        "chunk = 'a' * 100000\n"
+        "for _ in range(2000):\n"
+        "    sys.stdout.write(chunk)"
+    )
+    ok, out = run_python_sandboxed(code)
+    assert not ok
+    assert out == "output limit exceeded"
