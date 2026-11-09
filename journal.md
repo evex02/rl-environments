@@ -78,3 +78,10 @@ Difficulty	Reward	What it means for training
 - Same environment seed reproduces the same sequence of episodes.
 - Reused lessons: one reply per episode (done flag), fresh test inputs per episode.
 - Next: more tasks, then baselines with a local model.
+
+## pyfunc: false negative (honest answers scored 0)
+- Bug: the sandbox truncated all output to 2000 chars. FizzBuzz answers across 20 inputs exceed that, so a CORRECT solution lost the later answers and scored 0.0.
+- Found by: the reference-solution test for the new fizzbuzz_list task (predicted from reading the code, then confirmed).
+- Fix: run_python_sandboxed takes keep_chars; the grader asks for the full flood limit (100 KB). Anything over that is still rejected as a flood, so the grader sees all output or none.
+- Guards: test_reference_solution_passes_on_other_seeds (every task, several episodes), test_legitimate_output_fits_under_the_cap (2x safety margin), test_output_is_truncated_unless_a_larger_limit_is_requested.
+- Lesson: false negatives hurt as much as exploits. The reward must be right in both directions, and a task isn't finished until its reference solution passes on many episodes.

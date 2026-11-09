@@ -3,6 +3,7 @@ import subprocess
 import pytest
 
 from grader import extract_code, grade, make_episode
+from run_code_docker import MAX_OUTPUT_BYTES
 from tasks import TASKS
 
 
@@ -144,3 +145,19 @@ def test_answers_memorised_from_one_episode_do_not_transfer():
     assert grade(reply_with(code), PALINDROME, seed=0) == 1.0
     # ...but those answers are useless on a fresh episode.
     assert grade(reply_with(code), PALINDROME, seed=1) == 0.0
+
+# --- false negatives: correct answers must not be punished ---
+
+@requires_docker
+@pytest.mark.parametrize("seed", [1, 2])
+@pytest.mark.parametrize("task", TASKS, ids=lambda t: t["name"])
+def test_reference_solution_passes_on_other_seeds(task, seed):
+    assert grade(reply_with(task["reference"]), task, seed=seed) == 1.0
+
+
+@pytest.mark.parametrize("task", TASKS, ids=lambda t: t["name"])
+def test_legitimate_output_fits_under_the_cap(task):
+    for seed in range(50):
+        _inputs, expected = make_episode(task, seed)
+        size = sum(len(answer) + 20 for answer in expected)
+        assert size < MAX_OUTPUT_BYTES / 2

@@ -1,3 +1,9 @@
+REPLY_RULE = (
+    "Reply with a single Markdown code block marked python that "
+    "defines the function."
+)
+
+
 def _palindrome_inputs(rng, n=20):
     """Fresh test inputs for each episode. Always includes two edge cases."""
     alphabet = "abcdeABCDE123 ,.!?"
@@ -16,6 +22,44 @@ def _palindrome_inputs(rng, n=20):
     return inputs
 
 
+def _second_largest_inputs(rng, n=20):
+    inputs = [[], [4], [2, 2], [1, 2]]
+    while len(inputs) < n:
+        size = rng.randint(2, 8)
+        inputs.append([rng.randint(-5, 10) for _ in range(size)])
+    return inputs
+
+
+def _rle_inputs(rng, n=20):
+    letters = "abcxyz"
+    inputs = ["", "a"]
+    while len(inputs) < n:
+        text, last = "", None
+        for _ in range(rng.randint(1, 5)):
+            last = rng.choice([c for c in letters if c != last])
+            text += last * rng.randint(1, 4)
+        inputs.append(text)
+    return inputs
+
+
+def _fizzbuzz_inputs(rng, n=20):
+    inputs = [0, 1, 15]
+    while len(inputs) < n:
+        inputs.append(rng.randint(5, 40))
+    return inputs
+
+
+def _intervals_inputs(rng, n=20):
+    inputs = [[], [[1, 3]]]
+    while len(inputs) < n:
+        pairs = []
+        for _ in range(rng.randint(2, 6)):
+            start = rng.randint(0, 20)
+            pairs.append([start, start + rng.randint(0, 5)])
+        inputs.append(pairs)
+    return inputs
+
+
 TASKS = [
     {
         "name": "is_palindrome",
@@ -28,16 +72,118 @@ TASKS = [
             "Examples:\n"
             "is_palindrome('Racecar') -> True\n"
             "is_palindrome('A man, a plan, a canal: Panama') -> True\n"
-            "is_palindrome('hello') -> False\n\n"
-            "Reply with a single Markdown code block marked python that "
-            "defines the function."
+            "is_palindrome('hello') -> False\n\n" + REPLY_RULE
         ),
-        # A function that makes fresh test inputs from a random number generator.
         "generate": _palindrome_inputs,
         "reference": (
             "def is_palindrome(text):\n"
             "    cleaned = [c.lower() for c in text if c.isalnum()]\n"
             "    return cleaned == cleaned[::-1]\n"
+        ),
+    },
+    {
+        "name": "second_largest",
+        "function": "second_largest",
+        "prompt": (
+            "Write a Python function `second_largest(numbers)` that takes a "
+            "list of integers and returns the second largest DISTINCT value. "
+            "If the list has fewer than two distinct values, return None.\n\n"
+            "Examples:\n"
+            "second_largest([3, 1, 2]) -> 2\n"
+            "second_largest([5, 5, 4]) -> 4\n"
+            "second_largest([7]) -> None\n\n" + REPLY_RULE
+        ),
+        "generate": _second_largest_inputs,
+        "reference": (
+            "def second_largest(numbers):\n"
+            "    values = sorted(set(numbers), reverse=True)\n"
+            "    return values[1] if len(values) >= 2 else None\n"
+        ),
+    },
+    {
+        "name": "run_length_encode",
+        "function": "run_length_encode",
+        "prompt": (
+            "Write a Python function `run_length_encode(text)` that "
+            "compresses a string of letters by replacing each run of "
+            "identical consecutive characters with that character followed "
+            "by the length of the run. The input contains only letters. "
+            "Return an empty string for an empty input.\n\n"
+            "Examples:\n"
+            "run_length_encode('aaabcc') -> 'a3b1c2'\n"
+            "run_length_encode('z') -> 'z1'\n"
+            "run_length_encode('') -> ''\n\n" + REPLY_RULE
+        ),
+        "generate": _rle_inputs,
+        "reference": (
+            "def run_length_encode(text):\n"
+            "    out = []\n"
+            "    i = 0\n"
+            "    while i < len(text):\n"
+            "        j = i\n"
+            "        while j < len(text) and text[j] == text[i]:\n"
+            "            j += 1\n"
+            "        out.append(text[i] + str(j - i))\n"
+            "        i = j\n"
+            "    return ''.join(out)\n"
+        ),
+    },
+    {
+        "name": "fizzbuzz_list",
+        "function": "fizzbuzz_list",
+        "prompt": (
+            "Write a Python function `fizzbuzz_list(n)` that returns a list "
+            "of strings for the numbers 1 to n inclusive. For a multiple of "
+            "both 3 and 5 use 'FizzBuzz', for a multiple of 3 use 'Fizz', "
+            "for a multiple of 5 use 'Buzz', otherwise use the number as a "
+            "string. If n is less than 1, return an empty list.\n\n"
+            "Examples:\n"
+            "fizzbuzz_list(3) -> ['1', '2', 'Fizz']\n"
+            "fizzbuzz_list(5) -> ['1', '2', 'Fizz', '4', 'Buzz']\n"
+            "fizzbuzz_list(0) -> []\n\n" + REPLY_RULE
+        ),
+        "generate": _fizzbuzz_inputs,
+        "reference": (
+            "def fizzbuzz_list(n):\n"
+            "    out = []\n"
+            "    for i in range(1, n + 1):\n"
+            "        if i % 15 == 0:\n"
+            "            out.append('FizzBuzz')\n"
+            "        elif i % 3 == 0:\n"
+            "            out.append('Fizz')\n"
+            "        elif i % 5 == 0:\n"
+            "            out.append('Buzz')\n"
+            "        else:\n"
+            "            out.append(str(i))\n"
+            "    return out\n"
+        ),
+    },
+    {
+        "name": "merge_intervals",
+        "function": "merge_intervals",
+        "prompt": (
+            "Write a Python function `merge_intervals(intervals)` that takes "
+            "a list of [start, end] pairs of integers (start <= end, in any "
+            "order) and returns a list of [start, end] lists in which "
+            "overlapping or touching intervals are merged, sorted by start. "
+            "Intervals that share an endpoint count as touching, so [1, 3] "
+            "and [3, 5] merge into [1, 5], but [1, 2] and [3, 4] do not "
+            "merge. Return an empty list for empty input.\n\n"
+            "Examples:\n"
+            "merge_intervals([[1, 3], [2, 6], [8, 10]]) -> [[1, 6], [8, 10]]\n"
+            "merge_intervals([[5, 7], [1, 2]]) -> [[1, 2], [5, 7]]\n"
+            "merge_intervals([]) -> []\n\n" + REPLY_RULE
+        ),
+        "generate": _intervals_inputs,
+        "reference": (
+            "def merge_intervals(intervals):\n"
+            "    merged = []\n"
+            "    for start, end in sorted(intervals):\n"
+            "        if merged and start <= merged[-1][1]:\n"
+            "            merged[-1][1] = max(merged[-1][1], end)\n"
+            "        else:\n"
+            "            merged.append([start, end])\n"
+            "    return merged\n"
         ),
     },
 ]

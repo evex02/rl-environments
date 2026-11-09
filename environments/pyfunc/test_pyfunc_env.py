@@ -23,7 +23,8 @@ requires_docker = pytest.mark.skipif(not docker_works(), reason="Docker not avai
 def test_reset_returns_the_prompt():
     env = PyFuncEnv(seed=0)
     prompt = env.reset()
-    assert "is_palindrome" in prompt
+    assert prompt == env.task["prompt"]
+    assert "Python function" in prompt
 
 
 def test_step_before_reset_raises():

@@ -2,7 +2,7 @@ import json
 import random
 import re
 
-from run_code_docker import run_python_sandboxed
+from run_code_docker import MAX_OUTPUT_BYTES, run_python_sandboxed
 
 CODE_BLOCK = re.compile(r"```(?:python|py)?\s*\n(.*?)```", re.DOTALL | re.IGNORECASE)
 RESULT_LINE = re.compile(r"RESULT (\d+) (.*)")
@@ -74,7 +74,7 @@ def grade(reply, task, seed=0):
     if code is None:
         return 0.0
     inputs, expected = make_episode(task, seed)
-    _ok, output = run_python_sandboxed(build_program(code, task, inputs), timeout=5)
+    _ok, output = run_python_sandboxed(build_program(code, task, inputs), timeout=5, keep_chars=MAX_OUTPUT_BYTES,)
     results = parse_results(output)
     if results is None or len(results) != len(expected):
         return 0.0

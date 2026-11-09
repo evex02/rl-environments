@@ -25,7 +25,7 @@ def _remove_container(name):
     )
 
 
-def run_python_sandboxed(code, timeout=5):
+def run_python_sandboxed(code, timeout=5, keep_chars=KEEP_CHARS):
     """Run untrusted Python code inside a locked-down Docker container."""
     name = f"sandbox-{uuid.uuid4().hex[:12]}"
     inner = INNER_SCRIPT.format(timeout=timeout, cap=MAX_OUTPUT_BYTES + 1)
@@ -91,5 +91,5 @@ def run_python_sandboxed(code, timeout=5):
     proc.wait()
     if fired["yes"] or proc.returncode == 124:  # 124 = 'timeout' fired
         return False, "timed out"
-    output = b"".join(chunks).decode("utf-8", errors="replace")[:KEEP_CHARS]
+    output = b"".join(chunks).decode("utf-8", errors="replace")[:keep_chars]
     return proc.returncode == 0, output

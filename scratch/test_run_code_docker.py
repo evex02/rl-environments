@@ -100,3 +100,12 @@ def test_output_flood_is_cut_off():
     ok, out = run_python_sandboxed(code)
     assert not ok
     assert out == "output limit exceeded"
+
+def test_output_is_truncated_unless_a_larger_limit_is_requested():
+    code = "print('a' * 5000)"
+    ok, out = run_python_sandboxed(code)
+    assert ok
+    assert len(out) == 2000
+    ok, out = run_python_sandboxed(code, keep_chars=10_000)
+    assert ok
+    assert len(out.strip()) == 5000
