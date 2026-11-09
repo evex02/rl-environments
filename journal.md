@@ -67,3 +67,14 @@ Difficulty	Reward	What it means for training
 - Output is capped at 2000 characters, so long legitimate answers would be cut off.
 - The AI's code can inspect the harness (it can see the inputs). It can't see the answers, but this needs a proper test.
 - Only single-argument functions are supported.
+
+## Lesson: a passing cheat test may pass by accident
+- memorised_key first passed against the fixed-key grader, which I expected to fail.
+- Likely cause: os._exit(0) skips flushing Python's output buffer, so the fake answers were lost.
+- Fix to the test: flush=True. A cheat test is only valid if it succeeds against a deliberately weak grader.
+
+## pyfunc environment class
+- PyFuncEnv: reset() picks a task and a fresh episode seed; step() grades once, then the episode is done.
+- Same environment seed reproduces the same sequence of episodes.
+- Reused lessons: one reply per episode (done flag), fresh test inputs per episode.
+- Next: more tasks, then baselines with a local model.
