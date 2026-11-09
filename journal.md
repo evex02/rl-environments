@@ -93,3 +93,13 @@ Difficulty	Reward	What it means for training
 - Limits: the audit only checks zeros. Passes that shouldn't be passes are not covered yet.
 - Two tasks sit at the ceiling for this model (palindrome, merge_intervals), so they give a trainer little signal.
 - Suspicion: palindrome inputs may not test the case rule (mirrored strings are exact palindromes).
+
+## pyfunc red-team round 3: weak tests let wrong solutions earn reward
+- Audit (audit_wrong_solutions.py): plausible wrong palindrome solutions earned reward 1.0 in 39-80% of episodes (raw reversal 78/200, keeps punctuation 81/200, drops digits 80/200, case-sensitive 161/200). merge_intervals "keeps the last end" got 1/200.
+- Cause: the generator built palindromes by exact mirroring, so case/punctuation/digit rules were rarely tested. Random strings almost never exercised them.
+- Why it matters: a trainer would learn that ignoring parts of the prompt still earns reward.
+- Fix: every episode now includes guaranteed "trap" inputs for each rule (case, punctuation, digits), plus a nested-interval case for merge_intervals.
+- Guards: test_known_wrong_solution_never_earns_reward (17 wrong solutions x 200 episodes, must all score 0), test_reference_passes_every_audit_episode.
+- Principle: don't rely on random inputs to hit a rule. Guarantee coverage, then measure it.
+- Limit: the guard only covers wrong solutions I thought of. Add new ones to WRONG in audit_wrong_solutions.py whenever I (or a model) find one.
+- The baseline v1 palindrome result (10/10) was measured with the weak tests. Re-run the baseline after tasks are final.

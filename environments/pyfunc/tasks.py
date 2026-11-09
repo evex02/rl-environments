@@ -4,21 +4,78 @@ REPLY_RULE = (
 )
 
 
+LETTERS = "abcde"
+DIGITS = "123"
+PUNCT = " ,.!?"
+
+
+def _mirror(rng, alphabet, lo=2, hi=5):
+    """An exact palindrome made only from the given characters."""
+    half = "".join(rng.choice(alphabet) for _ in range(rng.randint(lo, hi)))
+    return half + rng.choice(["", rng.choice(alphabet)]) + half[::-1]
+
+
+def _disguise(rng, text):
+    """Random upper/lower case and extra punctuation. A palindrome stays one."""
+    out = []
+    for ch in text:
+        if rng.random() < 0.3:
+            out.append(rng.choice(PUNCT))
+        out.append(ch.upper() if rng.random() < 0.5 else ch.lower())
+    return "".join(out)
+
+
+def _case_trap(rng):
+    """True, but only if case is ignored: 'Abcba' style."""
+    p = _mirror(rng, LETTERS)
+    return p[0].upper() + p[1:-1] + p[-1].lower()
+
+
+def _punctuation_trap(rng):
+    """True, but only if punctuation is ignored: '!abcba' style."""
+    return rng.choice("!?.,") + _mirror(rng, LETTERS)
+
+
+def _digit_trap(rng):
+    """False, but only if digits are counted: 'a1bb2a' style."""
+    p = _mirror(rng, LETTERS)
+    d1, d2 = rng.sample(DIGITS, 2)
+    return p[0] + d1 + p[1:-1] + d2 + p[-1]
+
+
+def _near_miss(rng):
+    """A palindrome with one character changed (usually no longer one)."""
+    p = list(_mirror(rng, LETTERS + DIGITS))
+    i = rng.randrange(len(p))
+    p[i] = rng.choice([c for c in LETTERS + DIGITS if c != p[i]])
+    return "".join(p)
+
+
 def _palindrome_inputs(rng, n=20):
-    """Fresh test inputs for each episode. Always includes two edge cases."""
-    alphabet = "abcdeABCDE123 ,.!?"
-    inputs = ["", "a"]
+    """Fresh inputs per episode. Every rule in the prompt is tested by at
+    least one input in EVERY episode, not left to chance."""
+    inputs = [
+        "",
+        "a",
+        _case_trap(rng),
+        _punctuation_trap(rng),
+        _digit_trap(rng),
+        _near_miss(rng),
+    ]
     while len(inputs) < n:
-        if rng.random() < 0.5:
-            # A palindrome once case and punctuation are ignored.
-            half = "".join(rng.choice(alphabet) for _ in range(rng.randint(1, 6)))
-            middle = rng.choice(["", "x", "7"])
-            inputs.append(half + middle + half[::-1])
+        kind = rng.random()
+        if kind < 0.4:
+            inputs.append(_disguise(rng, _mirror(rng, LETTERS + DIGITS)))
+        elif kind < 0.7:
+            inputs.append(_near_miss(rng))
         else:
-            # Random text, which is usually not a palindrome.
             inputs.append(
-                "".join(rng.choice(alphabet) for _ in range(rng.randint(1, 10)))
+                "".join(
+                    rng.choice(LETTERS + DIGITS + PUNCT)
+                    for _ in range(rng.randint(2, 10))
+                )
             )
+    rng.shuffle(inputs)
     return inputs
 
 
@@ -49,8 +106,19 @@ def _fizzbuzz_inputs(rng, n=20):
     return inputs
 
 
+def _nested_intervals(rng):
+    """An outer interval, a smaller one inside it, and a separate one."""
+    start = rng.randint(0, 10)
+    outer = [start, start + rng.randint(6, 10)]
+    inner = [start + 1, start + rng.randint(2, 4)]
+    far = [start + 30, start + 31]
+    pairs = [outer, inner, far]
+    rng.shuffle(pairs)
+    return pairs
+
+
 def _intervals_inputs(rng, n=20):
-    inputs = [[], [[1, 3]]]
+    inputs = [[], [[1, 3]], _nested_intervals(rng)]
     while len(inputs) < n:
         pairs = []
         for _ in range(rng.randint(2, 6)):
