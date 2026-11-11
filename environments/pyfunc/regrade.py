@@ -5,7 +5,8 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "scratch"))
+for _folder in ("sandbox", "common"):
+    sys.path.insert(0, str(ROOT / _folder))
 
 from baseline import EVAL_SEED_START
 from grader import build_program, extract_code, make_episode, parse_results

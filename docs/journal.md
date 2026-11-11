@@ -129,3 +129,9 @@ Difficulty	Reward	What it means for training
 - Two tasks sit near the ceiling for llama3.2:1b.
 
 - Guard (REQUIRE_DOCKER=1) not verified by a real shutdown: Docker restarts itself on demand here, so I could not stage the failure. Mitigation: read the skip count at the end of every run (-rs).
+
+## Repo tidy
+- Moved scratch/ into sandbox/, common/, learning/, and journal.md into docs/. Only moves and path-line edits; no logic changed.
+- Deleted the unsafe subprocess runner (run_code.py) and its tests, plus two one-off debug scripts. They remain in Git history.
+- Test count went from 124 passed + 1 xfailed to 121 passed + 1 xfailed, because 3 tests belonged to the deleted runner.
+- All scripts verified to import after the move (runpy check).

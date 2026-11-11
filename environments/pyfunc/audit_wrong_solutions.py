@@ -4,7 +4,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "scratch"))
+for _folder in ("sandbox", "common"):
+    sys.path.insert(0, str(ROOT / _folder))
 
 from grader import make_episode
 from tasks import TASKS
