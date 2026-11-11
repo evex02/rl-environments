@@ -127,3 +127,5 @@ Difficulty	Reward	What it means for training
 - A program that ignores the stop signal is only removed by the 20 s backstop. Untested.
 - Docker-level failures (e.g. the container fails to start) are not separated from 'wrong_or_broken'.
 - Two tasks sit near the ceiling for llama3.2:1b.
+
+- Guard (REQUIRE_DOCKER=1) not verified by a real shutdown: Docker restarts itself on demand here, so I could not stage the failure. Mitigation: read the skip count at the end of every run (-rs).
