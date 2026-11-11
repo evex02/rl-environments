@@ -103,3 +103,13 @@ Difficulty	Reward	What it means for training
 - Principle: don't rely on random inputs to hit a rule. Guarantee coverage, then measure it.
 - Limit: the guard only covers wrong solutions I thought of. Add new ones to WRONG in audit_wrong_solutions.py whenever I (or a model) find one.
 - The baseline v1 palindrome result (10/10) was measured with the weak tests. Re-run the baseline after tasks are final.
+
+## pyfunc baseline v2 (llama3.2:1b, temp 0.7, 20 per task, after trap inputs)
+- Overall 85/100 = 0.85 (95% 0.77 to 0.91). Palindrome 20/20, second_largest 11/20, run_length_encode 19/20, fizzbuzz 17/20, merge_intervals 18/20.
+- Audit: 14 of 15 failures are honest model errors. One (merge_intervals episode 19) scored 0.0 but re-graded 30/30 PASS (regrade.py).
+- Cause undetermined. The first re-grade took 9.6 s against ~1 s typical, so slow outliers exist on this machine. Hypothesis, untested: the in-container 5 s limit includes the wait for the code to arrive over the pipe, so a pipe stall can look like a timeout.
+- Design flaw found: the baseline recorded only the reward, so an infrastructure hiccup was indistinguishable from a wrong answer.
+- Fix: grade_detailed returns (reward, reason, attempts). Timeouts are retried once; wrong answers and floods never are, so a retry opens no new cheat. The env exposes env.info. Baselines now record the reason for each score.
+- Cost: genuine infinite loops now take ~2x as long to grade.
+- Known limits: the runner reports status as magic strings ("timed out") in the same channel as program output, so a program can print that text to mislabel its own reason (reward unaffected). Docker-level failures are not yet separated from wrong answers. Fixing the second needs the runner to return its exit code.
+- If the 0.0 was a false negative, merge_intervals is 19/20 and overall is 86/100.

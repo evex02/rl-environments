@@ -1,8 +1,9 @@
 import subprocess
 
 import pytest
+import grader
 
-from grader import extract_code, grade, make_episode
+from grader import extract_code, grade, grade_detailed, make_episode
 from run_code_docker import MAX_OUTPUT_BYTES
 from tasks import TASKS
 
@@ -161,3 +162,55 @@ def test_legitimate_output_fits_under_the_cap(task):
         _inputs, expected = make_episode(task, seed)
         size = sum(len(answer) + 20 for answer in expected)
         assert size < MAX_OUTPUT_BYTES / 2
+
+# --- infrastructure hiccups must not look like wrong answers ---
+
+def good_output(task, seed):
+    """What a perfectly correct solution would print for this episode."""
+    _inputs, expected = make_episode(task, seed)
+    return "".join(f"\nRESULT {i} {answer}\n" for i, answer in enumerate(expected))
+
+
+def fake_sandbox(outputs):
+    """A pretend sandbox: returns the given outputs in order and counts calls."""
+    calls = []
+
+    def fake(code, timeout=5, keep_chars=0):
+        calls.append(1)
+        return False, outputs[min(len(calls), len(outputs)) - 1]
+
+    return fake, calls
+
+
+def test_a_one_off_timeout_is_retried(monkeypatch):
+    fake, calls = fake_sandbox(["timed out", good_output(PALINDROME, 0)])
+    monkeypatch.setattr(grader, "run_python_sandboxed", fake)
+    result = grade_detailed(reply_with("x = 1"), PALINDROME, seed=0)
+    assert result == (1.0, "pass", 2)
+
+
+def test_a_repeated_timeout_scores_zero_after_one_retry(monkeypatch):
+    fake, calls = fake_sandbox(["timed out"])
+    monkeypatch.setattr(grader, "run_python_sandboxed", fake)
+    result = grade_detailed(reply_with("x = 1"), PALINDROME, seed=0)
+    assert result == (0.0, "timeout", 2)
+    assert len(calls) == 2
+
+
+def test_a_wrong_answer_is_never_retried(monkeypatch):
+    fake, calls = fake_sandbox(["\nRESULT 0 true\n"])
+    monkeypatch.setattr(grader, "run_python_sandboxed", fake)
+    result = grade_detailed(reply_with("x = 1"), PALINDROME, seed=0)
+    assert result == (0.0, "wrong_or_broken", 1)
+    assert len(calls) == 1
+
+
+def test_a_flood_is_not_retried(monkeypatch):
+    fake, calls = fake_sandbox(["output limit exceeded"])
+    monkeypatch.setattr(grader, "run_python_sandboxed", fake)
+    result = grade_detailed(reply_with("x = 1"), PALINDROME, seed=0)
+    assert result == (0.0, "flood", 1)
+
+
+def test_missing_code_block_reports_no_code():
+    assert grade_detailed("no code here", PALINDROME) == (0.0, "no_code", 0)

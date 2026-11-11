@@ -68,17 +68,45 @@ def parse_results(output):
     return results
 
 
-def grade(reply, task, seed=0):
-    """Return 1.0 only if every answer matches the expected answers."""
+MAX_ATTEMPTS = 2  # one retry, and only for timeouts
+
+
+def grade_detailed(reply, task, seed=0):
+    """Return (reward, reason, attempts).
+
+    reason is one of: pass, no_code, wrong_or_broken, timeout, flood.
+    Only a timeout is retried: a stall on the machine can look like an
+    infinite loop, but a retry never forgives a wrong answer.
+    """
     code = extract_code(reply)
     if code is None:
-        return 0.0
+        return 0.0, "no_code", 0
     inputs, expected = make_episode(task, seed)
-    _ok, output = run_python_sandboxed(build_program(code, task, inputs), timeout=5, keep_chars=MAX_OUTPUT_BYTES,)
+    program = build_program(code, task, inputs)
+
+    attempts = 0
+    while True:
+        attempts += 1
+        _ok, output = run_python_sandboxed(
+            program, timeout=5, keep_chars=MAX_OUTPUT_BYTES
+        )
+        if output == "timed out" and attempts < MAX_ATTEMPTS:
+            continue
+        break
+
+    if output == "timed out":
+        return 0.0, "timeout", attempts
+    if output == "output limit exceeded":
+        return 0.0, "flood", attempts
     results = parse_results(output)
     if results is None or len(results) != len(expected):
-        return 0.0
+        return 0.0, "wrong_or_broken", attempts
     for index, want in enumerate(expected):
         if results.get(index) != want:
-            return 0.0
-    return 1.0
+            return 0.0, "wrong_or_broken", attempts
+    return 1.0, "pass", attempts
+
+
+def grade(reply, task, seed=0):
+    """Just the reward. Everything else in the project can keep using this."""
+    return grade_detailed(reply, task, seed)[0]

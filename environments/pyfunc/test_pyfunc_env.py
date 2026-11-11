@@ -73,3 +73,9 @@ def test_reference_solution_scores_full_marks_through_env():
     env.reset()
     reply = f"```python\n{env.task['reference']}\n```"
     assert env.step(reply) == 1.0
+
+def test_step_records_why_the_reward_was_given():
+    env = PyFuncEnv(seed=0)
+    env.reset()
+    env.step("no code here")
+    assert env.info["reason"] == "no_code"

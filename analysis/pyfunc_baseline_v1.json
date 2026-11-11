@@ -1,0 +1,402 @@
+{
+  "model": "llama3.2:1b",
+  "temperature": 0.7,
+  "max_tokens": 600,
+  "episodes_per_task": 10,
+  "summary": {
+    "is_palindrome": {
+      "n": 10,
+      "pass_rate": 1.0,
+      "low": 0.7224598312333834,
+      "high": 1.0,
+      "code_block_rate": 1.0
+    },
+    "second_largest": {
+      "n": 10,
+      "pass_rate": 0.4,
+      "low": 0.16817758120350967,
+      "high": 0.6873304525498135,
+      "code_block_rate": 1.0
+    },
+    "run_length_encode": {
+      "n": 10,
+      "pass_rate": 0.9,
+      "low": 0.5958436145024278,
+      "high": 0.9821242504842788,
+      "code_block_rate": 1.0
+    },
+    "fizzbuzz_list": {
+      "n": 10,
+      "pass_rate": 0.7,
+      "low": 0.39677321997956516,
+      "high": 0.892210712513788,
+      "code_block_rate": 1.0
+    },
+    "merge_intervals": {
+      "n": 10,
+      "pass_rate": 1.0,
+      "low": 0.7224598312333834,
+      "high": 1.0,
+      "code_block_rate": 1.0
+    },
+    "ALL": {
+      "n": 50,
+      "pass_rate": 0.8,
+      "low": 0.6696262789551477,
+      "high": 0.8875637005402612,
+      "code_block_rate": 1.0
+    }
+  },
+  "records": [
+    {
+      "task": "is_palindrome",
+      "episode": 0,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef is_palindrome(text):\n    \"\"\"\n    Returns True if `text` reads the same forwards and backwards, \n    ignoring upper/lower case and any character that is not a letter or digit.\n    \n    Parameters:\n    text (str): The input string to check.\n    \n    Returns:\n    bool: Whether the input string is a palindrome.\n    \"\"\"\n    text = ''.join(filter(str.isalnum, text)).lower()  # Remove non-alphanumeric characters and convert to lower case\n    return text == text[::-1]  # Compare the string with its reverse\n```"
+    },
+    {
+      "task": "is_palindrome",
+      "episode": 1,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef is_palindrome(text):\n    \"\"\"\n    Returns True if the input text reads the same forwards and backwards,\n    ignoring upper/lower case and any character that is not a letter or digit.\n    \n    Parameters:\n    text (str): The input text to check.\n    \n    Returns:\n    bool: True if the text is a palindrome, False otherwise.\n    \"\"\"\n    text = ''.join(c for c in text if c.isalnum()).lower()  # Remove non-alphanumeric characters and convert to lowercase\n    return text == text[::-1]  # Compare the original text with the reversed text\n```"
+    },
+    {
+      "task": "is_palindrome",
+      "episode": 2,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef is_palindrome(text):\n    \"\"\"\n    Returns True if the input text is a palindrome, ignoring upper/lower case and non-letter/digit characters.\n    \n    Parameters:\n    text (str): The input text to be checked.\n    \n    Returns:\n    bool: True if the text is a palindrome, False otherwise.\n    \"\"\"\n    text = ''.join(c for c in text if c.isalnum()).lower()  # Remove non-alphanumeric characters and convert to lower case\n    return text == text[::-1]  # Compare the text with its reverse\n```"
+    },
+    {
+      "task": "is_palindrome",
+      "episode": 3,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef is_palindrome(text):\n    \"\"\"\n    Returns True if `text` is a palindrome, ignoring upper/lower case and any character that is not a letter or digit.\n    \n    Parameters:\n    text (str): The input string to check.\n    \n    Returns:\n    bool: True if `text` is a palindrome, False otherwise.\n    \"\"\"\n    text = ''.join(c for c in text if c.isalnum()).lower()  # remove non-alphanumeric characters and convert to lower case\n    return text == text[::-1]  # compare the string with its reverse\n```"
+    },
+    {
+      "task": "is_palindrome",
+      "episode": 4,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef is_palindrome(text):\n    \"\"\"\n    Returns True if the given text is a palindrome, ignoring upper/lower case and non-alphanumeric characters.\n    \n    Parameters:\n    text (str): The text to check.\n    \n    Returns:\n    bool: Whether the text is a palindrome.\n    \"\"\"\n    # Remove non-alphanumeric characters and convert to lower case\n    cleaned_text = ''.join(char.lower() for char in text if char.isalnum())\n    \n    # Compare the cleaned text with its reverse\n    return cleaned_text == cleaned_text[::-1]\n```"
+    },
+    {
+      "task": "is_palindrome",
+      "episode": 5,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef is_palindrome(text):\n    text = ''.join(c for c in text if c.isalnum()).lower()\n    return text == text[::-1]\n```"
+    },
+    {
+      "task": "is_palindrome",
+      "episode": 6,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef is_palindrome(text):\n    \"\"\"\n    Returns True if `text` reads the same forwards and backwards, ignoring upper/lower case and any character that is not a letter or digit, and False otherwise.\n\n    Parameters:\n    text (str): The input string to be checked.\n\n    Returns:\n    bool: Whether the input string is a palindrome or not.\n    \"\"\"\n    text = ''.join(c for c in text if c.isalnum()).lower()  # Remove non-alphanumeric characters and convert to lowercase\n    return text == text[::-1]  # Check if the cleaned text is equal to its reverse\n```"
+    },
+    {
+      "task": "is_palindrome",
+      "episode": 7,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef is_palindrome(text):\n    \"\"\"\n    Returns True if `text` reads the same forwards and backwards, \n    ignoring upper/lower case and any character that is not a letter or digit, \n    and False otherwise.\n\n    Args:\n        text (str): The input string to check.\n\n    Returns:\n        bool: Whether the input string is a palindrome.\n    \"\"\"\n    text = ''.join(c for c in text if c.isalnum()).lower()  # Remove non-alphanumeric characters and convert to lower case\n    return text == text[::-1]  # Check if the string is equal to its reverse\n```"
+    },
+    {
+      "task": "is_palindrome",
+      "episode": 8,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef is_palindrome(text):\n    \"\"\"\n    Returns True if `text` reads the same forwards and backwards, ignoring upper/lower case and any character that is not a letter or digit.\n    \n    Parameters:\n    text (str): The input string to check.\n    \n    Returns:\n    bool: True if the string is a palindrome, False otherwise.\n    \"\"\"\n    text = ''.join(filter(str.isalnum, text)).lower()  # remove non-letter/digit characters and convert to lower case\n    return text == text[::-1]  # compare the string with its reverse\n```"
+    },
+    {
+      "task": "is_palindrome",
+      "episode": 9,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef is_palindrome(text):\n    \"\"\"\n    Returns True if `text` reads the same forwards and backwards, \n    ignoring upper/lower case and any character that is not a letter or digit, \n    and False otherwise.\n    \n    Parameters:\n    text (str): The input string to check.\n    \n    Returns:\n    bool: True if the string is a palindrome, False otherwise.\n    \"\"\"\n    text = ''.join(filter(str.isalnum, text)).lower()  # Remove non-alphanumeric characters and convert to lower case\n    return text == text[::-1]  # Check if the string is the same forwards and backwards\n```"
+    },
+    {
+      "task": "second_largest",
+      "episode": 0,
+      "reward": 0.0,
+      "has_code": true,
+      "reply": "```python\ndef second_largest(numbers):\n    \"\"\"\n    Returns the second largest distinct value in a list of integers.\n    \n    Args:\n        numbers (list): A list of integers.\n    \n    Returns:\n        int or None: The second largest distinct value, or None if the list has fewer than two distinct values.\n    \"\"\"\n    # Remove duplicates by converting the list to a set\n    distinct_numbers = set(numbers)\n    \n    # If the list has fewer than two distinct values, return None\n    if len(distinct_numbers) < 2:\n        return None\n    \n    # Return the maximum of the two largest distinct numbers\n    return max(distinct_numbers) if distinct_numbers else None\n```"
+    },
+    {
+      "task": "second_largest",
+      "episode": 1,
+      "reward": 0.0,
+      "has_code": true,
+      "reply": "```python\ndef second_largest(numbers):\n    \"\"\"\n    Returns the second largest distinct value in a list of integers.\n    \n    Args:\n    numbers (list): A list of integers.\n    \n    Returns:\n    int or None: The second largest distinct value, or None if the list has fewer than two distinct values.\n    \"\"\"\n    # Remove duplicates by converting the list to a set\n    unique_numbers = set(numbers)\n    \n    # If the list has fewer than two distinct values, return None\n    if len(unique_numbers) < 2:\n        return None\n    \n    # Otherwise, return the largest of the two largest distinct values\n    else:\n        return max(unique_numbers) if unique_numbers else None\n```"
+    },
+    {
+      "task": "second_largest",
+      "episode": 2,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef second_largest(numbers):\n    \"\"\"\n    Returns the second largest distinct value in a list of integers.\n\n    Args:\n        numbers (list): A list of integers.\n\n    Returns:\n        int or None: The second largest distinct value, or None if the list has fewer than two distinct values.\n    \"\"\"\n    # Remove duplicates by converting the list to a set\n    distinct_numbers = set(numbers)\n    \n    # If the set has fewer than two distinct values, return None\n    if len(distinct_numbers) < 2:\n        return None\n    \n    # Return the second largest distinct value\n    return sorted(distinct_numbers)[-2]\n```"
+    },
+    {
+      "task": "second_largest",
+      "episode": 3,
+      "reward": 0.0,
+      "has_code": true,
+      "reply": "```python\ndef second_largest(numbers):\n    \"\"\"\n    Returns the second largest distinct value in a list of integers.\n    If the list has fewer than two distinct values, returns None.\n\n    Parameters:\n    numbers (list): A list of integers.\n\n    Returns:\n    int or None: The second largest distinct value, or None if the list has fewer than two distinct values.\n    \"\"\"\n    # Remove duplicates by converting the list to a set\n    unique_numbers = set(numbers)\n    \n    # If there are fewer than two distinct values, return None\n    if len(unique_numbers) < 2:\n        return None\n    \n    # Return the second largest value\n    return sorted(unique_numbers)[1]\n```"
+    },
+    {
+      "task": "second_largest",
+      "episode": 4,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef second_largest(numbers):\n    \"\"\"\n    Returns the second largest distinct value in a list of integers.\n    \n    Args:\n        numbers (list): A list of integers.\n    \n    Returns:\n        int or None: The second largest distinct value, or None if the list has fewer than two distinct values.\n    \"\"\"\n    # Remove duplicates by converting the list to a set\n    unique_numbers = set(numbers)\n    \n    # If the set has fewer than two distinct values, return None\n    if len(unique_numbers) < 2:\n        return None\n    \n    # Sort the set in descending order\n    sorted_numbers = sorted(unique_numbers, reverse=True)\n    \n    # Return the second largest distinct value\n    return sorted_numbers[1]\n```"
+    },
+    {
+      "task": "second_largest",
+      "episode": 5,
+      "reward": 0.0,
+      "has_code": true,
+      "reply": "```python\ndef second_largest(numbers):\n    \"\"\"\n    Returns the second largest distinct value in a list of integers.\n    \n    If the list has fewer than two distinct values, returns None.\n    \n    Parameters:\n    numbers (list): A list of integers.\n    \n    Returns:\n    int: The second largest distinct value, or None if the list has fewer than two distinct values.\n    \"\"\"\n    # Remove duplicates by converting the list to a set\n    distinct_numbers = set(numbers)\n    \n    # If the set has fewer than two elements, return None\n    if len(distinct_numbers) < 2:\n        return None\n    \n    # Sort the set in descending order and return the first element (which is the second largest)\n    return sorted(distinct_numbers, reverse=True)[0]\n```"
+    },
+    {
+      "task": "second_largest",
+      "episode": 6,
+      "reward": 0.0,
+      "has_code": true,
+      "reply": "```python\ndef second_largest(numbers):\n    \"\"\"\n    Returns the second largest distinct value in a list of integers.\n    \n    If the list has fewer than two distinct values, returns None.\n    \n    Parameters:\n    numbers (list): A list of integers.\n    \n    Returns:\n    int or None: The second largest distinct value, or None if the list has fewer than two distinct values.\n    \"\"\"\n    # Remove duplicates by converting the list to a set\n    distinct_numbers = set(numbers)\n    \n    # If the set has fewer than two elements, return None\n    if len(distinct_numbers) < 2:\n        return None\n    \n    # Otherwise, return the second largest element\n    else:\n        return max(distinct_numbers) if distinct_numbers else None\n```"
+    },
+    {
+      "task": "second_largest",
+      "episode": 7,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef second_largest(numbers):\n    \"\"\"\n    Returns the second largest distinct value in a list of integers.\n    \n    If the list has fewer than two distinct values, returns None.\n    \n    Parameters:\n    numbers (list): A list of integers.\n    \n    Returns:\n    int or None: The second largest distinct value, or None if the list has fewer than two distinct values.\n    \"\"\"\n    # Remove duplicates by converting the list to a set\n    unique_numbers = set(numbers)\n    \n    # If the set has fewer than two elements, return None\n    if len(unique_numbers) < 2:\n        return None\n    \n    # Sort the set in descending order and return the second element\n    return sorted(unique_numbers, reverse=True)[1]\n```"
+    },
+    {
+      "task": "second_largest",
+      "episode": 8,
+      "reward": 0.0,
+      "has_code": true,
+      "reply": "```python\ndef second_largest(numbers):\n    \"\"\"\n    Returns the second largest distinct value in a list of integers.\n    \n    If the list has fewer than two distinct values, returns None.\n    \n    Parameters:\n    numbers (list): A list of integers.\n    \n    Returns:\n    int or None: The second largest distinct value, or None if the list has fewer than two distinct values.\n    \"\"\"\n    # Remove duplicates by converting the list to a set\n    distinct_numbers = set(numbers)\n    \n    # If the set has fewer than two elements, return None\n    if len(distinct_numbers) < 2:\n        return None\n    \n    # Return the second largest number (with a negative sign to make it negative)\n    return -max(distinct_numbers)\n```"
+    },
+    {
+      "task": "second_largest",
+      "episode": 9,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef second_largest(numbers):\n    \"\"\"\n    Returns the second largest distinct value in a list of integers.\n    If the list has fewer than two distinct values, returns None.\n\n    Args:\n        numbers (list): A list of integers.\n\n    Returns:\n        int or None: The second largest distinct value or None.\n    \"\"\"\n    # Remove duplicates by converting the list to a set\n    unique_numbers = set(numbers)\n    \n    # If the set has fewer than two elements, return None\n    if len(unique_numbers) < 2:\n        return None\n    \n    # Return the second largest element\n    return sorted(unique_numbers)[-2]\n```"
+    },
+    {
+      "task": "run_length_encode",
+      "episode": 0,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef run_length_encode(text):\n    \"\"\"\n    Compress a string of letters by replacing each run of identical consecutive characters\n    with that character followed by the length of the run.\n\n    Args:\n        text (str): The input string of letters.\n\n    Returns:\n        str: The compressed string.\n    \"\"\"\n    if not text:  # If the input is empty, return an empty string.\n        return ''\n\n    result = ''  # Initialize an empty string to store the result.\n    count = 1  # Initialize a counter to count the consecutive characters.\n    for i in range(1, len(text)):  # Iterate over the input string starting from the second character.\n        if text[i] == text[i - 1]:  # If the current character is the same as the previous one.\n            count += 1  # Increment the counter.\n        else:\n            result += text[i - 1] + str(count)  # Append the previous character and its count to the result string.\n            count = 1  # Reset the counter.\n\n    # Append the last character and its count to the result string.\n    result += text[-1] + str(count)\n\n    return result\n```"
+    },
+    {
+      "task": "run_length_encode",
+      "episode": 1,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef run_length_encode(text):\n    \"\"\"\n    Compresses a string of letters by replacing each run of identical consecutive characters\n    with that character followed by the length of the run.\n\n    Args:\n        text (str): The input string to be compressed.\n\n    Returns:\n        str: The compressed string.\n    \"\"\"\n    if not text:  # Return empty string for empty input\n        return ''\n\n    result = ''  # Initialize the result string\n    count = 1  # Initialize the character count\n\n    for i in range(1, len(text)):  # Iterate over the input string\n        if text[i] == text[i - 1]:  # If the current character is the same as the previous one\n            count += 1  # Increment the character count\n        else:\n            result += text[i - 1] + str(count)  # Append the character and count to the result string\n            count = 1  # Reset the character count\n\n    result += text[-1] + str(count)  # Append the last character and count to the result string\n    return result\n```"
+    },
+    {
+      "task": "run_length_encode",
+      "episode": 2,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef run_length_encode(text):\n    \"\"\"\n    Compresses a string of letters by replacing each run of identical consecutive characters\n    with that character followed by the length of the run.\n\n    Args:\n        text (str): The input string to be compressed.\n\n    Returns:\n        str: The compressed string.\n    \"\"\"\n    if not text:\n        return ''\n\n    compressed = ''\n    current_char = text[0]\n    current_count = 1\n\n    for char in text[1:]:\n        if char == current_char:\n            current_count += 1\n        else:\n            compressed += current_char + str(current_count)\n            current_char = char\n            current_count = 1\n\n    # Append the last character and count\n    compressed += current_char + str(current_count)\n\n    return compressed\n```"
+    },
+    {
+      "task": "run_length_encode",
+      "episode": 3,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef run_length_encode(text):\n    \"\"\"\n    Compresses a string of letters by replacing each run of identical consecutive characters\n    with that character followed by the length of the run.\n\n    Args:\n        text (str): The input string to be compressed.\n\n    Returns:\n        str: The compressed string.\n    \"\"\"\n    if not text:  # Return an empty string for an empty input\n        return ''\n\n    compressed = ''  # Initialize an empty string to store the compressed result\n    count = 1  # Initialize a counter to count consecutive occurrences of a character\n\n    for i in range(1, len(text)):  # Iterate over the input string starting from the second character\n        if text[i] == text[i - 1]:  # Check if the current character is the same as the previous one\n            count += 1  # If yes, increment the counter\n        else:\n            compressed += text[i - 1] + str(count)  # If not, append the character and its count to the compressed string\n            count = 1  # Reset the counter for the new character\n\n    # Append the last character and its count to the compressed string\n    compressed += text[-1] + str(count)\n\n    return compressed\n```"
+    },
+    {
+      "task": "run_length_encode",
+      "episode": 4,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef run_length_encode(text):\n    \"\"\"\n    This function compresses a string of letters by replacing each run of identical consecutive characters\n    with that character followed by the length of the run.\n\n    Args:\n        text (str): A string of letters.\n\n    Returns:\n        str: The compressed string.\n    \"\"\"\n    if not text:  # If the input is empty, return an empty string.\n        return ''\n\n    compressed = ''  # Initialize an empty string to store the compressed result.\n    count = 1  # Initialize a counter to count the consecutive occurrences of a character.\n\n    for i in range(1, len(text)):  # Iterate through the input string starting from the second character.\n        if text[i] == text[i - 1]:  # If the current character is the same as the previous one.\n            count += 1  # Increment the counter.\n        else:  # If the current character is different from the previous one.\n            compressed += text[i - 1] + str(count)  # Append the character and the count to the compressed string.\n            count = 1  # Reset the counter.\n\n    compressed += text[-1] + str(count)  # Append the last character and the count to the compressed string.\n\n    return compressed\n```"
+    },
+    {
+      "task": "run_length_encode",
+      "episode": 5,
+      "reward": 0.0,
+      "has_code": true,
+      "reply": "```python\ndef run_length_encode(text):\n    \"\"\"\n    Compresses a string of letters by replacing each run of identical consecutive characters\n    with that character followed by the length of the run.\n\n    Args:\n        text (str): The input string to be compressed.\n\n    Returns:\n        str: The compressed string.\n    \"\"\"\n    if not text:  # If the input is empty, return an empty string\n        return ''\n\n    result = ''  # Initialize an empty string to store the result\n    current_char = text[0]  # Initialize the current character\n    current_count = 1  # Initialize the count of consecutive characters\n\n    for char in text[1.:]:  # Iterate over the input string starting from the second character\n        if char == current_char:  # If the current character is the same as the previous one\n            current_count += 1  # Increment the count\n        else:\n            result += current_char + str(current_count)  # Append the previous character and its count to the result\n            current_char = char  # Update the current character\n            current_count = 1  # Reset the count\n\n    result += current_char + str(current_count)  # Append the last character and its count to the result\n    return result\n\n# Example usage:\nprint(run_length_encode('aaabcc'))  # Output: 'a3b1c2'\nprint(run_length_encode('z'))  # Output: 'z1'\nprint(run_length_encode(''))  # Output: ''\n```"
+    },
+    {
+      "task": "run_length_encode",
+      "episode": 6,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef run_length_encode(text):\n    \"\"\"\n    Compress a string of letters by replacing each run of identical consecutive characters\n    with that character followed by the length of the run.\n\n    Args:\n        text (str): The input string to be compressed.\n\n    Returns:\n        str: The compressed string.\n    \"\"\"\n    if not text:  # Return empty string for an empty input\n        return ''\n\n    compressed = ''  # Initialize an empty string to store the compressed result\n    count = 1  # Initialize a counter to count the consecutive occurrences of a character\n\n    for i in range(1, len(text)):  # Iterate over the input string starting from the second character\n        if text[i] == text[i - 1]:  # If the current character is the same as the previous one\n            count += 1  # Increment the counter\n        else:  # If the current character is different from the previous one\n            compressed += text[i - 1] + str(count)  # Append the character and its count to the compressed string\n            count = 1  # Reset the counter\n\n    # Append the last character and its count to the compressed string\n    compressed += text[-1] + str(count)\n\n    return compressed\n```"
+    },
+    {
+      "task": "run_length_encode",
+      "episode": 7,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef run_length_encode(text):\n    \"\"\"\n    Compress a string of letters by replacing each run of identical consecutive characters\n    with that character followed by the length of the run.\n\n    Args:\n        text (str): The input string to be compressed.\n\n    Returns:\n        str: The compressed string.\n    \"\"\"\n    if not text:  # Check if the input is empty\n        return ''\n\n    compressed = ''  # Initialize an empty string to store the compressed result\n    count = 1  # Initialize a counter to count the consecutive occurrences of a character\n\n    for i in range(1, len(text)):  # Iterate over the input string starting from the second character\n        if text[i] == text[i - 1]:  # Check if the current character is the same as the previous one\n            count += 1  # If they are the same, increment the counter\n        else:\n            compressed += text[i - 1] + str(count)  # If they are different, append the character and the count to the compressed string\n            count = 1  # Reset the counter\n\n    compressed += text[-1] + str(count)  # Append the last character and its count to the compressed string\n    return compressed\n```"
+    },
+    {
+      "task": "run_length_encode",
+      "episode": 8,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef run_length_encode(text):\n    \"\"\"\n    This function compresses a string of letters by replacing each run of identical consecutive characters \n    with that character followed by the length of the run.\n\n    Args:\n        text (str): The input string to be compressed.\n\n    Returns:\n        str: The compressed string.\n    \"\"\"\n    if not text:  # If the input is empty, return an empty string.\n        return ''\n\n    compressed = ''  # Initialize an empty string to store the compressed result.\n    prev_char = text[0]  # Initialize the previous character as the first character of the input.\n    count = 1  # Initialize the count of consecutive occurrences of the previous character as 1.\n\n    for char in text[1:]:  # Iterate over the input string starting from the second character.\n        if char == prev_char:  # If the current character is the same as the previous character.\n            count += 1  # Increment the count.\n        else:  # If the current character is different from the previous character.\n            compressed += prev_char + str(count)  # Append the previous character and its count to the compressed string.\n            prev_char = char  # Update the previous character.\n            count = 1  # Reset the count to 1.\n\n    compressed += prev_char + str(count)  # Append the last character and its count to the compressed string.\n    return compressed\n```"
+    },
+    {
+      "task": "run_length_encode",
+      "episode": 9,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef run_length_encode(text):\n    \"\"\"\n    Compresses a string of letters by replacing each run of identical consecutive characters\n    with that character followed by the length of the run.\n\n    Args:\n        text (str): The input string to be compressed.\n\n    Returns:\n        str: The compressed string.\n    \"\"\"\n    if not text:  # Check for empty input\n        return ''\n\n    compressed = ''  # Initialize the compressed string\n    count = 1  # Initialize the count of consecutive characters\n\n    for i in range(1, len(text)):  # Iterate over the input string\n        if text[i] == text[i - 1]:  # Check if the current character is the same as the previous one\n            count += 1  # Increment the count if they are the same\n        else:\n            compressed += text[i - 1] + str(count)  # Append the character and its count to the compressed string\n            count = 1  # Reset the count for the new character\n\n    # Append the last character and its count to the compressed string\n    compressed += text[-1] + str(count)\n\n    return compressed\n```"
+    },
+    {
+      "task": "fizzbuzz_list",
+      "episode": 0,
+      "reward": 0.0,
+      "has_code": true,
+      "reply": "```python\ndef fizzbuzz_list(n):\n    \"\"\"\n    Returns a list of strings for the numbers 1 to n inclusive.\n    \n    For a multiple of both 3 and 5 use 'FizzBuzz', for a multiple of 3 use 'Fizz', \n    for a multiple of 5 use 'Buzz', otherwise use the number as a string. If n is less than 1, return an empty list.\n    \n    Parameters:\n    n (int): The upper limit of the range.\n    \n    Returns:\n    list: A list of strings.\n    \"\"\"\n    if n < 1:\n        return []\n    \n    fizzbuzz = ['' if i % 15 == 0 else 'Fizz' if i % 3 == 0 else 'Buzz' if i % 5 == 0 else str(i) for i in range(1, n+1)]\n    \n    return fizzbuzz\n```"
+    },
+    {
+      "task": "fizzbuzz_list",
+      "episode": 1,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef fizzbuzz_list(n):\n    \"\"\"\n    Returns a list of strings for the numbers 1 to n inclusive.\n    \n    For a multiple of both 3 and 5 use 'FizzBuzz', for a multiple of 3 use 'Fizz', \n    for a multiple of 5 use 'Buzz', otherwise use the number as a string. \n    If n is less than 1, return an empty list.\n    \"\"\"\n    return ['FizzBuzz' if i % 15 == 0 else 'Fizz' if i % 3 == 0 else 'Buzz' if i % 5 == 0 else str(i) for i in range(1, n+1)]\n```"
+    },
+    {
+      "task": "fizzbuzz_list",
+      "episode": 2,
+      "reward": 0.0,
+      "has_code": true,
+      "reply": "```python\ndef fizzbuzz_list(n):\n    \"\"\"\n    Returns a list of strings for the numbers 1 to n inclusive.\n    \n    For a multiple of both 3 and 5 use 'FizzBuzz', for a multiple of 3 use 'Fizz',\n    for a multiple of 5 use 'Buzz', otherwise use the number as a string.\n    \n    If n is less than 1, return an empty list.\n    \"\"\"\n    return [''.join([c if i % 15 != 0 else c for i, c in enumerate(str(n)])) for n in range(1, n + 1)]\n```"
+    },
+    {
+      "task": "fizzbuzz_list",
+      "episode": 3,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef fizzbuzz_list(n):\n    \"\"\"\n    Returns a list of strings for the numbers 1 to n inclusive.\n    \n    For a multiple of both 3 and 5, returns 'FizzBuzz'.\n    For a multiple of 3, returns 'Fizz'.\n    For a multiple of 5, returns 'Buzz'.\n    Otherwise, returns the number as a string.\n    \n    If n is less than 1, returns an empty list.\n    \"\"\"\n    result = []\n    for i in range(1, n + 1):\n        if i % 15 == 0:\n            result.append('FizzBuzz')\n        elif i % 3 == 0:\n            result.append('Fizz')\n        elif i % 5 == 0:\n            result.append('Buzz')\n        else:\n            result.append(str(i))\n    return result\n```"
+    },
+    {
+      "task": "fizzbuzz_list",
+      "episode": 4,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef fizzbuzz_list(n):\n    \"\"\"\n    Returns a list of strings for the numbers 1 to n inclusive.\n    For a multiple of both 3 and 5 use 'FizzBuzz', for a multiple of 3 use 'Fizz', for a multiple of 5 use 'Buzz', otherwise use the number as a string.\n    If n is less than 1, return an empty list.\n    \n    Parameters:\n    n (int): The upper limit of the range (inclusive)\n    \n    Returns:\n    list: A list of strings for the FizzBuzz sequence\n    \"\"\"\n    if n < 1:\n        return []\n    \n    fizzbuzz_list = []\n    for i in range(1, n + 1):\n        if i % 15 == 0:\n            fizzbuzz_list.append('FizzBuzz')\n        elif i % 3 == 0:\n            fizzbuzz_list.append('Fizz')\n        elif i % 5 == 0:\n            fizzbuzz_list.append('Buzz')\n        else:\n            fizzbuzz_list.append(str(i))\n    \n    return fizzbuzz_list\n```"
+    },
+    {
+      "task": "fizzbuzz_list",
+      "episode": 5,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef fizzbuzz_list(n):\n    \"\"\"\n    Returns a list of strings for the numbers 1 to n inclusive.\n    \n    For a multiple of both 3 and 5 use 'FizzBuzz', for a multiple of 3 use 'Fizz', \n    for a multiple of 5 use 'Buzz', otherwise use the number as a string.\n    \n    If n is less than 1, returns an empty list.\n    \"\"\"\n    result = []\n    for i in range(1, n + 1):\n        if i % 3 == 0 and i % 5 == 0:\n            result.append('FizzBuzz')\n        elif i % 3 == 0:\n            result.append('Fizz')\n        elif i % 5 == 0:\n            result.append('Buzz')\n        else:\n            result.append(str(i))\n    return result\n```"
+    },
+    {
+      "task": "fizzbuzz_list",
+      "episode": 6,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef fizzbuzz_list(n):\n    \"\"\"\n    Returns a list of strings for the numbers 1 to n inclusive.\n    \n    For a multiple of both 3 and 5 use 'FizzBuzz', \n    for a multiple of 3 use 'Fizz', for a multiple of 5 use 'Buzz', \n    otherwise use the number as a string.\n    \n    If n is less than 1, returns an empty list.\n    \"\"\"\n    result = []\n    for i in range(1, n + 1):\n        if i % 3 == 0 and i % 5 == 0:\n            result.append('FizzBuzz')\n        elif i % 3 == 0:\n            result.append('Fizz')\n        elif i % 5 == 0:\n            result.append('Buzz')\n        else:\n            result.append(str(i))\n    return result\n```"
+    },
+    {
+      "task": "fizzbuzz_list",
+      "episode": 7,
+      "reward": 0.0,
+      "has_code": true,
+      "reply": "```python\ndef fizzbuzz_list(n):\n    \"\"\"\n    Returns a list of strings for the numbers 1 to n inclusive.\n    \n    For a multiple of both 3 and 5 use 'FizzBuzz', for a multiple of 3 use 'Fizz', \n    for a multiple of 5 use 'Buzz', otherwise use the number as a string. \n    If n is less than 1, return an empty list.\n    \n    Args:\n        n (int): The upper limit of the range (inclusive).\n    \n    Returns:\n        list: A list of strings according to the FizzBuzz rules.\n    \"\"\"\n    return [str(i) if i % 15 != 0 else 'FizzBuzz' if i % 3 == 0 else 'Fizz' if i % 5 == 0 else str(i) for i in range(1, n+1)]\n```"
+    },
+    {
+      "task": "fizzbuzz_list",
+      "episode": 8,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef fizzbuzz_list(n):\n    \"\"\"\n    Returns a list of strings for the numbers 1 to n inclusive.\n    \n    For a multiple of both 3 and 5 use 'FizzBuzz', for a multiple of 3 use 'Fizz',\n    for a multiple of 5 use 'Buzz', otherwise use the number as a string.\n    \n    If n is less than 1, return an empty list.\n    \"\"\"\n    if n < 1:\n        return []\n    \n    result = []\n    for i in range(1, n + 1):\n        if i % 15 == 0:\n            result.append('FizzBuzz')\n        elif i % 3 == 0:\n            result.append('Fizz')\n        elif i % 5 == 0:\n            result.append('Buzz')\n        else:\n            result.append(str(i))\n    \n    return result\n```"
+    },
+    {
+      "task": "fizzbuzz_list",
+      "episode": 9,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef fizzbuzz_list(n):\n    \"\"\"\n    Returns a list of strings for the numbers 1 to n inclusive.\n    \n    For a multiple of both 3 and 5 use 'FizzBuzz', for a multiple of 3 use 'Fizz', \n    for a multiple of 5 use 'Buzz', otherwise use the number as a string.\n    If n is less than 1, return an empty list.\n    \"\"\"\n    result = []\n    for i in range(1, n + 1):\n        if i % 3 == 0 and i % 5 == 0:\n            result.append('FizzBuzz')\n        elif i % 3 == 0:\n            result.append('Fizz')\n        elif i % 5 == 0:\n            result.append('Buzz')\n        else:\n            result.append(str(i))\n    return result\n```"
+    },
+    {
+      "task": "merge_intervals",
+      "episode": 0,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    Merge overlapping or touching intervals in a list of [start, end] pairs of integers.\n\n    Intervals that share an endpoint count as touching, so [1, 3] and [3, 5] merge into [1, 5],\n    but [1, 2] and [3, 4] do not merge. Return an empty list for empty input.\n\n    Args:\n        intervals (list): A list of [start, end] pairs of integers.\n\n    Returns:\n        list: A list of [start, end] lists in which overlapping or touching intervals are merged, sorted by start.\n    \"\"\"\n\n    # If the input list is empty, return an empty list\n    if not intervals:\n        return []\n\n    # Sort the intervals by start\n    intervals.sort(key=lambda x: x[0])\n\n    # Initialize the result with the first interval\n    merged = [intervals[0]]\n\n    # Iterate over the remaining intervals\n    for current in intervals[1:]:\n        # Get the last merged interval\n        last_merged = merged[-1]\n\n        # If the current interval overlaps or touches the last merged interval, merge them\n        if current[0] <= last_merged[1]:\n            # Update the end of the last merged interval\n            last_merged[1] = max(last_merged[1], current[1])\n        else:\n            # Add the current interval to the result\n            merged.append(current)\n\n    # Convert the result back to [start, end] pairs and sort by start\n    result = [(start, end) for start, end in merged]\n    result.sort(key=lambda x: x[0])\n\n    return result\n```"
+    },
+    {
+      "task": "merge_intervals",
+      "episode": 1,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    This function takes a list of [start, end] pairs of integers and returns a list of [start, end] lists \n    in which overlapping or touching intervals are merged, sorted by start.\n\n    :param intervals: A list of [start, end] pairs of integers\n    :return: A list of [start, end] lists in which overlapping or touching intervals are merged\n    \"\"\"\n    # If the input list is empty, return an empty list\n    if not intervals:\n        return []\n\n    # Sort the intervals by start\n    intervals.sort(key=lambda x: x[0])\n\n    # Initialize the result list with the first interval\n    merged = [intervals[0]]\n\n    # Iterate over the remaining intervals\n    for current in intervals[1:]:\n        # If the current interval overlaps with the last merged interval, merge them\n        if current[0] <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], current[1])\n        # If the current interval does not overlap with the last merged interval, add it to the result\n        else:\n            merged.append(current)\n\n    # Return the result\n    return merged\n```"
+    },
+    {
+      "task": "merge_intervals",
+      "episode": 2,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    Merge overlapping or touching intervals in a list of [start, end] pairs.\n\n    Args:\n        intervals (list of lists): A list of [start, end] pairs of integers.\n\n    Returns:\n        list of lists: A list of [start, end] lists in which overlapping or touching intervals are merged, sorted by start.\n    \"\"\"\n    # Handle empty input\n    if not intervals:\n        return []\n\n    # Sort intervals by start\n    intervals.sort(key=lambda x: x[0])\n\n    # Initialize the result with the first interval\n    result = [intervals[0]]\n\n    # Iterate over the remaining intervals\n    for current_interval in intervals[1:]:\n        # Get the last interval in the result\n        last_interval = result[-1]\n\n        # Check if the current interval overlaps with the last interval\n        if current_interval[0] <= last_interval[1]:\n            # Merge the current interval with the last interval\n            result[-1] = [last_interval[0], max(last_interval[1], current_interval[1])]\n        else:\n            # Add the current interval to the result\n            result.append(current_interval)\n\n    return result\n```"
+    },
+    {
+      "task": "merge_intervals",
+      "episode": 3,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    This function takes a list of [start, end] pairs of integers and returns a list of [start, end] lists \n    in which overlapping or touching intervals are merged, sorted by start.\n\n    Args:\n        intervals (list): A list of [start, end] pairs of integers.\n\n    Returns:\n        list: A list of [start, end] lists where overlapping or touching intervals are merged.\n    \"\"\"\n    \n    # If the input list is empty, return an empty list\n    if not intervals:\n        return []\n\n    # Sort the intervals by start value\n    intervals.sort(key=lambda x: x[0])\n\n    # Initialize the result list with the first interval\n    merged = [intervals[0]]\n\n    # Iterate over the remaining intervals\n    for current in intervals[1:]:\n        # Get the last merged interval\n        last = merged[-1]\n\n        # If the current interval overlaps with the last merged interval, merge them\n        if current[0] <= last[1]:\n            # Update the last merged interval by taking the maximum of its current value and the end of the current interval\n            merged[-1] = [last[0], max(last[1], current[1])]\n        else:\n            # If the current interval does not overlap with the last merged interval, add it to the result list\n            merged.append(current)\n\n    return merged\n```"
+    },
+    {
+      "task": "merge_intervals",
+      "episode": 4,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    Merge overlapping or touching intervals in a list of [start, end] pairs.\n\n    Args:\n        intervals (list): A list of [start, end] pairs of integers.\n\n    Returns:\n        list: A list of [start, end] lists in which overlapping or touching intervals are merged, sorted by start.\n    \"\"\"\n    # If the input list is empty, return an empty list\n    if not intervals:\n        return []\n\n    # Sort the intervals by start\n    intervals.sort(key=lambda x: x[0])\n\n    # Initialize the result with the first interval\n    merged = [intervals[0]]\n\n    # Iterate over the remaining intervals\n    for current in intervals[1:]:\n        # Get the last merged interval\n        last = merged[-1]\n\n        # If the current interval overlaps with the last merged interval, merge them\n        if current[0] <= last[1]:\n            # Update the end of the last merged interval\n            last[1] = max(last[1], current[1])\n        else:\n            # Add the current interval to the result\n            merged.append(current)\n\n    return merged\n```"
+    },
+    {
+      "task": "merge_intervals",
+      "episode": 5,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    Merge overlapping or touching intervals in a list of [start, end] pairs.\n\n    Intervals that share an endpoint count as touching, so [1, 3] and [3, 5] merge into [1, 5],\n    but [1, 2] and [3, 4] do not merge. Return an empty list for empty input.\n\n    Args:\n        intervals (list): A list of [start, end] pairs of integers.\n\n    Returns:\n        list: A list of [start, end] lists in which overlapping or touching intervals are merged, sorted by start.\n    \"\"\"\n\n    # If the input list is empty, return an empty list\n    if not intervals:\n        return []\n\n    # Sort the intervals by start value\n    intervals.sort(key=lambda x: x[0])\n\n    # Initialize the result list with the first interval\n    merged = [intervals[0]]\n\n    # Iterate over the remaining intervals\n    for current in intervals[1:]:\n        # Get the last merged interval\n        last = merged[-1]\n\n        # If the current interval overlaps or touches the last merged interval, merge them\n        if current[0] <= last[1]:\n            # Update the end of the last merged interval\n            last[1] = max(last[1], current[1])\n        else:\n            # Add the current interval to the result list\n            merged.append(current)\n\n    # Convert the merged intervals back to [start, end] pairs\n    result = [(start, end) for start, end in merged]\n\n    return result\n```"
+    },
+    {
+      "task": "merge_intervals",
+      "episode": 6,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    Merge overlapping or touching intervals in a list of [start, end] pairs.\n\n    Args:\n        intervals (list): A list of [start, end] pairs of integers.\n\n    Returns:\n        list: A list of [start, end] lists in which overlapping or touching intervals are merged, sorted by start.\n    \"\"\"\n    # If the input list is empty, return an empty list\n    if not intervals:\n        return []\n\n    # Sort the intervals by their start values\n    intervals.sort(key=lambda x: x[0])\n\n    # Initialize the result with the first interval\n    merged = [intervals[0]]\n\n    # Iterate over the remaining intervals\n    for current in intervals[1:]:\n        # If the current interval overlaps or touches the last merged interval, merge them\n        if current[0] <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], current[1])\n        else:\n            # Otherwise, add the current interval to the result\n            merged.append(current)\n\n    # Convert the merged intervals back to [start, end] pairs and sort by start\n    merged = [[start, end] for start, end in merged]\n    merged.sort(key=lambda x: x[0])\n\n    return merged\n```"
+    },
+    {
+      "task": "merge_intervals",
+      "episode": 7,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    Merge overlapping or touching [start, end] pairs of intervals and sort by start.\n\n    Args:\n    intervals (list): A list of [start, end] pairs of integers.\n\n    Returns:\n    list: A list of [start, end] lists where overlapping or touching intervals are merged.\n    \"\"\"\n    # If the input list is empty, return an empty list\n    if not intervals:\n        return []\n\n    # Sort the intervals by start\n    intervals.sort(key=lambda x: x[0])\n\n    # Initialize the merged list with the first interval\n    merged = [intervals[0]]\n\n    # Iterate over the remaining intervals\n    for current in intervals[1:]:\n        # Get the last merged interval\n        last = merged[-1]\n\n        # If the current interval overlaps or touches the last merged interval, merge them\n        if current[0] <= last[1]:\n            merged[-1] = [last[0], max(last[1], current[1])]\n        # Otherwise, add the current interval to the merged list\n        else:\n            merged.append(current)\n\n    return merged\n```"
+    },
+    {
+      "task": "merge_intervals",
+      "episode": 8,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    Merge overlapping or touching intervals in a list of [start, end] pairs.\n\n    Args:\n    intervals: A list of [start, end] pairs of integers.\n\n    Returns:\n    A list of [start, end] lists in which overlapping or touching intervals are merged, sorted by start.\n    \"\"\"\n    if not intervals:\n        return []\n\n    # Sort the intervals based on their start value\n    intervals.sort(key=lambda x: x[0])\n\n    merged = [intervals[0]]\n\n    for current in intervals[1:]:\n        last = merged[-1]\n\n        # Check if the current interval overlaps or touches the last merged interval\n        if current[0] <= last[1]:\n            # Merge the current interval with the last merged interval\n            merged[-1] = [last[0], max(last[1], current[1])]\n        else:\n            # Add the current interval to the list of merged intervals\n            merged.append(current)\n\n    return merged\n```"
+    },
+    {
+      "task": "merge_intervals",
+      "episode": 9,
+      "reward": 1.0,
+      "has_code": true,
+      "reply": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    Merge overlapping or touching intervals in a list of [start, end] pairs.\n\n    Args:\n    intervals (list): A list of [start, end] pairs of integers.\n\n    Returns:\n    list: A list of [start, end] lists in which overlapping or touching intervals are merged, sorted by start.\n    \"\"\"\n    # Sort the intervals by start\n    intervals.sort(key=lambda x: x[0])\n\n    # Initialize the merged list\n    merged = []\n\n    # Check if the input list is not empty\n    if intervals:\n        # Initialize the merged list with the first interval\n        merged = [intervals[0]]\n\n        # Iterate over the remaining intervals\n        for current in intervals[1:]:\n            # Get the last merged interval\n            last = merged[-1]\n\n            # Check if the current interval overlaps or touches the last merged interval\n            if current[0] <= last[1]:\n                # Merge the current interval with the last merged interval\n                merged[-1] = [last[0], max(last[1], current[1])]\n            else:\n                # Add the current interval to the merged list\n                merged.append(current)\n\n    return merged\n```\n\nThis function first sorts the input intervals by start. Then, it iterates over the remaining intervals and checks if they overlap or touch the last merged interval. If they do, it merges them; otherwise, it adds them to the merged list. Finally, it returns the merged list."
+    }
+  ]
+}

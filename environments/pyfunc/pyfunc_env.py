@@ -1,6 +1,6 @@
 import random
 
-from grader import grade
+from grader import grade_detailed
 from tasks import TASKS
 
 
@@ -12,12 +12,14 @@ class PyFuncEnv:
         self.tasks = tasks or TASKS
         self.task = None
         self.episode_seed = None
+        self.info = {}
         self.done = True  # no episode is running yet
 
     def reset(self):
         """Start a new episode: pick a task and a fresh set of test inputs."""
         self.task = self.rng.choice(self.tasks)
         self.episode_seed = self.rng.randrange(2**31)
+        self.info = {}
         self.done = False
         return self.task["prompt"]
 
@@ -26,4 +28,8 @@ class PyFuncEnv:
         if self.done:
             raise RuntimeError("No active episode: call reset() first")
         self.done = True  # the episode ends after one reply
-        return grade(reply, self.task, seed=self.episode_seed)
+        reward, reason, attempts = grade_detailed(
+            reply, self.task, seed=self.episode_seed
+        )
+        self.info = {"reason": reason, "attempts": attempts}
+        return reward

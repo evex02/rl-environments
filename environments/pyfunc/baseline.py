@@ -1,5 +1,6 @@
 import json
 import sys
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -81,6 +82,8 @@ def main():
                     "episode": i,
                     "reward": reward,
                     "has_code": extract_code(reply) is not None,
+                    "reason": env.info["reason"],
+                    "attempts": env.info["attempts"],
                     "reply": reply,
                 }
             )
@@ -95,6 +98,7 @@ def main():
             f"(95% {s['low']:.2f} to {s['high']:.2f}) | "
             f"code block {s['code_block_rate']:.2f} | n={s['n']}"
         )
+    print("reasons:", dict(Counter(r["reason"] for r in records)))
 
 
 if __name__ == "__main__":
