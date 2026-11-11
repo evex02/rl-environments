@@ -2,7 +2,7 @@ import json
 import random
 import re
 
-from run_code_docker import MAX_OUTPUT_BYTES, run_python_sandboxed
+from run_code_docker import MAX_OUTPUT_BYTES, run_python_detailed
 
 CODE_BLOCK = re.compile(r"```(?:python|py)?\s*\n(.*?)```", re.DOTALL | re.IGNORECASE)
 RESULT_LINE = re.compile(r"RESULT (\d+) (.*)")
@@ -75,8 +75,9 @@ def grade_detailed(reply, task, seed=0):
     """Return (reward, reason, attempts).
 
     reason is one of: pass, no_code, wrong_or_broken, timeout, flood.
-    Only a timeout is retried: a stall on the machine can look like an
-    infinite loop, but a retry never forgives a wrong answer.
+    The reason comes from the runner's status, never from the program's
+    output. Only a timeout is retried: a stall on the machine can look like
+    an infinite loop, but a retry never forgives a wrong answer.
     """
     code = extract_code(reply)
     if code is None:
@@ -87,16 +88,16 @@ def grade_detailed(reply, task, seed=0):
     attempts = 0
     while True:
         attempts += 1
-        _ok, output = run_python_sandboxed(
+        status, output = run_python_detailed(
             program, timeout=5, keep_chars=MAX_OUTPUT_BYTES
         )
-        if output == "timed out" and attempts < MAX_ATTEMPTS:
+        if status == "timeout" and attempts < MAX_ATTEMPTS:
             continue
         break
 
-    if output == "timed out":
+    if status == "timeout":
         return 0.0, "timeout", attempts
-    if output == "output limit exceeded":
+    if status == "flood":
         return 0.0, "flood", attempts
     results = parse_results(output)
     if results is None or len(results) != len(expected):

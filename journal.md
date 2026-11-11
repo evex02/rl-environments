@@ -113,3 +113,17 @@ Difficulty	Reward	What it means for training
 - Cost: genuine infinite loops now take ~2x as long to grade.
 - Known limits: the runner reports status as magic strings ("timed out") in the same channel as program output, so a program can print that text to mislabel its own reason (reward unaffected). Docker-level failures are not yet separated from wrong answers. Fixing the second needs the runner to return its exit code.
 - If the 0.0 was a false negative, merge_intervals is 19/20 and overall is 86/100.
+
+## pyfunc red-team round 4: the harness
+- Attack 1 (replace json.dumps so every printed answer is 'true'): the attack runs, but earns nothing. The answer key never enters the sandbox.
+- Attack 2 (read the harness's variables with sys._getframe): the AI can see the question list. No answers are in it. Rule: everything inside the sandbox is public to the AI, so never put answers or secrets in a program that goes in.
+- Attack 3 (print the runner's status text, then exit): reward stayed 0.0, but the REASON was spoofed ('timeout' or 'flood'), and a fake timeout also triggered a retry. Impact: corrupts the reasons recorded in baselines, doubles grading time for that reply. No reward impact.
+- Cause: status and output travelled in the same channel (magic strings in the output).
+- Fix: run_python_detailed returns (status, output) with the status decided by the runner from the exit code, a byte count and a timer. The grader no longer reads status from the output.
+- Guards: test_program_output_cannot_spoof_the_failure_reason (2 cases), test_output_that_says_timed_out_is_just_output, runner status tests.
+
+## Known remaining weaknesses
+- Exit code 124 means "timeout", and a program can exit with that code itself. Documented as an xfail test (test_exit_code_124_cannot_spoof_a_timeout). Effect: the reason says 'timeout' and the grading is repeated once. Reward unaffected. Possible fix: also require that the wall-clock time reached the timeout.
+- A program that ignores the stop signal is only removed by the 20 s backstop. Untested.
+- Docker-level failures (e.g. the container fails to start) are not separated from 'wrong_or_broken'.
+- Two tasks sit near the ceiling for llama3.2:1b.

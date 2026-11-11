@@ -1,10 +1,11 @@
 import subprocess
 import threading
+import time
 import uuid
 
 IMAGE = "python:3.12-slim"
 MAX_OUTPUT_BYTES = 100_000  # more output than this counts as a flood
-KEEP_CHARS = 2000           # how much output we hand back
+KEEP_CHARS = 2000           # default amount of output we hand back
 
 # This runs INSIDE the container. The program's output goes into a file in
 # the small /tmp area, then only the first MAX_OUTPUT_BYTES + 1 bytes are
@@ -25,12 +26,20 @@ def _remove_container(name):
     )
 
 
-def run_python_sandboxed(code, timeout=5, keep_chars=KEEP_CHARS):
-    """Run untrusted Python code inside a locked-down Docker container."""
+def run_python_detailed(code, timeout=5, keep_chars=KEEP_CHARS):
+    """Run untrusted Python code in a locked-down Docker container.
+
+    Returns (status, output). The status is decided by the runner, never by
+    anything the program prints:
+      "ok"       the program exited with code 0
+      "error"    it exited with any other code
+      "timeout"  it ran out of time
+      "flood"    it produced more than MAX_OUTPUT_BYTES of output
+    """
     name = f"sandbox-{uuid.uuid4().hex[:12]}"
     inner = INNER_SCRIPT.format(timeout=timeout, cap=MAX_OUTPUT_BYTES + 1)
     cmd = [
-        "wsl", "-u", "root", "--exec",   # --exec: no extra shell in between
+        "wsl", "-u", "root", "--exec",
         "docker", "run", "--rm", "-i",
         "--name", name,
         "--network", "none",
@@ -86,10 +95,25 @@ def run_python_sandboxed(code, timeout=5, keep_chars=KEEP_CHARS):
         _remove_container(name)
         proc.kill()
         proc.wait()
-        return False, "output limit exceeded"
+        return "flood", ""
 
     proc.wait()
     if fired["yes"] or proc.returncode == 124:  # 124 = 'timeout' fired
-        return False, "timed out"
+        return "timeout", ""
     output = b"".join(chunks).decode("utf-8", errors="replace")[:keep_chars]
-    return proc.returncode == 0, output
+    return ("ok" if proc.returncode == 0 else "error"), output
+
+
+def run_python_sandboxed(code, timeout=5, keep_chars=KEEP_CHARS):
+    """Older interface: (ok, output). Kept so existing tests and scripts work.
+
+    For timeouts and floods it returns a fixed text message. Anything that
+    needs to tell those apart from real program output must use
+    run_python_detailed instead.
+    """
+    status, output = run_python_detailed(code, timeout, keep_chars)
+    if status == "timeout":
+        return False, "timed out"
+    if status == "flood":
+        return False, "output limit exceeded"
+    return status == "ok", output

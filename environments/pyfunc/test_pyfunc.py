@@ -171,45 +171,53 @@ def good_output(task, seed):
     return "".join(f"\nRESULT {i} {answer}\n" for i, answer in enumerate(expected))
 
 
-def fake_sandbox(outputs):
-    """A pretend sandbox: returns the given outputs in order and counts calls."""
+def fake_sandbox(results):
+    """A pretend sandbox: returns the given (status, output) pairs in order."""
     calls = []
 
     def fake(code, timeout=5, keep_chars=0):
         calls.append(1)
-        return False, outputs[min(len(calls), len(outputs)) - 1]
+        return results[min(len(calls), len(results)) - 1]
 
     return fake, calls
 
 
 def test_a_one_off_timeout_is_retried(monkeypatch):
-    fake, calls = fake_sandbox(["timed out", good_output(PALINDROME, 0)])
-    monkeypatch.setattr(grader, "run_python_sandboxed", fake)
+    fake, calls = fake_sandbox([("timeout", ""), ("ok", good_output(PALINDROME, 0))])
+    monkeypatch.setattr(grader, "run_python_detailed", fake)
     result = grade_detailed(reply_with("x = 1"), PALINDROME, seed=0)
     assert result == (1.0, "pass", 2)
 
 
 def test_a_repeated_timeout_scores_zero_after_one_retry(monkeypatch):
-    fake, calls = fake_sandbox(["timed out"])
-    monkeypatch.setattr(grader, "run_python_sandboxed", fake)
+    fake, calls = fake_sandbox([("timeout", "")])
+    monkeypatch.setattr(grader, "run_python_detailed", fake)
     result = grade_detailed(reply_with("x = 1"), PALINDROME, seed=0)
     assert result == (0.0, "timeout", 2)
     assert len(calls) == 2
 
 
 def test_a_wrong_answer_is_never_retried(monkeypatch):
-    fake, calls = fake_sandbox(["\nRESULT 0 true\n"])
-    monkeypatch.setattr(grader, "run_python_sandboxed", fake)
+    fake, calls = fake_sandbox([("ok", "\nRESULT 0 true\n")])
+    monkeypatch.setattr(grader, "run_python_detailed", fake)
     result = grade_detailed(reply_with("x = 1"), PALINDROME, seed=0)
     assert result == (0.0, "wrong_or_broken", 1)
     assert len(calls) == 1
 
 
 def test_a_flood_is_not_retried(monkeypatch):
-    fake, calls = fake_sandbox(["output limit exceeded"])
-    monkeypatch.setattr(grader, "run_python_sandboxed", fake)
+    fake, calls = fake_sandbox([("flood", "")])
+    monkeypatch.setattr(grader, "run_python_detailed", fake)
     result = grade_detailed(reply_with("x = 1"), PALINDROME, seed=0)
     assert result == (0.0, "flood", 1)
+
+
+def test_output_that_says_timed_out_is_just_output(monkeypatch):
+    fake, calls = fake_sandbox([("ok", "timed out")])
+    monkeypatch.setattr(grader, "run_python_detailed", fake)
+    result = grade_detailed(reply_with("x = 1"), PALINDROME, seed=0)
+    assert result == (0.0, "wrong_or_broken", 1)
+    assert len(calls) == 1
 
 
 def test_missing_code_block_reports_no_code():

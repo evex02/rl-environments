@@ -2,7 +2,7 @@ import subprocess
 
 import pytest
 
-from run_code_docker import run_python_sandboxed
+from run_code_docker import run_python_detailed, run_python_sandboxed
 
 
 def docker_works():
@@ -109,3 +109,30 @@ def test_output_is_truncated_unless_a_larger_limit_is_requested():
     ok, out = run_python_sandboxed(code, keep_chars=10_000)
     assert ok
     assert len(out.strip()) == 5000
+
+def test_detailed_status_ok():
+    status, out = run_python_detailed("print('hi')")
+    assert status == "ok"
+    assert out.strip() == "hi"
+
+
+def test_detailed_status_error():
+    status, _out = run_python_detailed("import sys\nsys.exit(3)")
+    assert status == "error"
+
+
+def test_detailed_status_timeout():
+    status, _out = run_python_detailed("while True: pass", timeout=2)
+    assert status == "timeout"
+
+
+def test_detailed_status_flood():
+    code = "import sys\nfor _ in range(2000):\n    sys.stdout.write('a' * 100000)"
+    status, _out = run_python_detailed(code)
+    assert status == "flood"
+
+
+def test_printing_status_words_does_not_change_the_status():
+    status, out = run_python_detailed("print('timed out')")
+    assert status == "ok"
+    assert out.strip() == "timed out"
