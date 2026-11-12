@@ -169,3 +169,11 @@ Difficulty	Reward	What it means for training
 - Task generators (analyst_tasks.py): three tasks. Each episode carries decoys, the answers that wrong approaches would give. Episodes where a decoy lands within 0.05 of the truth are thrown away, so a wrong method cannot pass by coincidence. Same lesson as the palindrome task.
 - Independent check: tests recompute each answer from the CSV text with different code from the generator.
 - Tolerance is 0.01 on answers given to 2 decimal places.
+
+## analyst: the environment class
+- AnalystEnv.reset()/step() with the five-part return (observation, reward, terminated, truncated, info). The tool is injectable (run_tool), so 33 tests run with a pretend tool and no Docker.
+- Changes from the design: a code reply on the last turn is not run (the episode ends anyway); episode reasons are pass / wrong_answer / no_final, with invalid replies counted separately instead of a fourth reason; the prompt gives the CSV header, not a column description.
+- The tool's status (ok/error/timeout/flood) comes from the runner, never from program output. A FINAL line printed by tool code is not an answer (test_final_text_printed_by_the_tool_is_not_an_answer).
+- The true answer never enters the sandbox program or any message (test with a sentinel value).
+- Tolerance: 0.01, compared with a 1e-9 allowance for floating-point rounding.
+- Next: the oracle test (a scripted model that runs the reference calculation through the real sandbox must score 1.0 on every task), then the wrong-approach audit and cheat tests.
