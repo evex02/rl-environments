@@ -4,20 +4,8 @@ import pytest
 import grader
 
 from grader import extract_code, grade, grade_detailed, make_episode
-from run_code_docker import MAX_OUTPUT_BYTES
+from run_code_docker import MAX_OUTPUT_BYTES, docker_works
 from tasks import TASKS
-
-
-def docker_works():
-    try:
-        result = subprocess.run(
-            ["wsl", "-u", "root", "--", "docker", "info"],
-            capture_output=True,
-            timeout=30,
-        )
-        return result.returncode == 0
-    except Exception:
-        return False
 
 
 requires_docker = pytest.mark.skipif(not docker_works(), reason="Docker not available")

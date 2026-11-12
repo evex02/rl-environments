@@ -4,17 +4,7 @@ import pytest
 
 from pyfunc_env import PyFuncEnv
 
-
-def docker_works():
-    try:
-        result = subprocess.run(
-            ["wsl", "-u", "root", "--", "docker", "info"],
-            capture_output=True,
-            timeout=30,
-        )
-        return result.returncode == 0
-    except Exception:
-        return False
+from run_code_docker import docker_works
 
 
 requires_docker = pytest.mark.skipif(not docker_works(), reason="Docker not available")

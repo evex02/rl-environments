@@ -140,3 +140,10 @@ Difficulty	Reward	What it means for training
 - Cloned a fresh copy and rebuilt .venv, instead of moving the folder (a venv hard-codes its location, and OneDrive can interfere with Git and thousands of small files).
 - Verified: pytest gives 121 passed, 1 xfailed, 0 skipped in the new location.
 - The sandbox does not depend on the project's location: code is piped into the container, and no host folders are mounted.
+
+## Sandbox made portable (prepares for CI)
+- Problem: every Docker call hardcoded the 'wsl -u root' prefix, so nothing would run on GitHub's Linux test machines.
+- Fix: docker_command() picks the prefix by platform (wsl on Windows, plain docker elsewhere). One shared docker_works() replaces five copies of the check.
+- Tests (no Docker needed): the chosen command for win32, linux and darwin, and that the run command contains no wsl on Linux.
+- Caveat: I have only run this on Windows. The Linux path is untested until CI runs it. Expect the first CI run to possibly find Linux-only differences.
+- Risk noted: the 20 s backstop timer starts before docker run finishes. If the python:3.12-slim image has to be downloaded first, a slow download could be reported as a timeout. CI will pre-pull the image.

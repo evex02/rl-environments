@@ -2,19 +2,7 @@ import subprocess
 
 import pytest
 
-from run_code_docker import run_python_detailed, run_python_sandboxed
-
-
-def docker_works():
-    try:
-        result = subprocess.run(
-            ["wsl", "-u", "root", "--", "docker", "info"],
-            capture_output=True,
-            timeout=30,
-        )
-        return result.returncode == 0
-    except Exception:
-        return False
+from run_code_docker import docker_works, run_python_detailed, run_python_sandboxed
 
 
 pytestmark = pytest.mark.skipif(not docker_works(), reason="Docker not available")

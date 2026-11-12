@@ -1,20 +1,7 @@
 import os
-import subprocess
 import time
 
 import pytest
-
-
-def _docker_responds():
-    try:
-        result = subprocess.run(
-            ["wsl", "-u", "root", "--", "docker", "info"],
-            capture_output=True,
-            timeout=60,
-        )
-        return result.returncode == 0
-    except Exception:
-        return False
 
 
 def pytest_sessionstart(session):
@@ -24,8 +11,10 @@ def pytest_sessionstart(session):
     Docker has to be responding before that happens. If REQUIRE_DOCKER=1
     and Docker never answers, stop the whole run instead of skipping.
     """
+    from run_code_docker import docker_works
+
     for _ in range(4):
-        if _docker_responds():
+        if docker_works(timeout=60):
             return
         time.sleep(5)
     if os.environ.get("REQUIRE_DOCKER") == "1":

@@ -1,6 +1,6 @@
 import subprocess
+import sys
 import threading
-import time
 import uuid
 
 IMAGE = "python:3.12-slim"
@@ -19,9 +19,34 @@ INNER_SCRIPT = (
 )
 
 
+def docker_command():
+    """The command prefix that reaches Docker on this machine.
+
+    On Windows, Docker Engine lives inside WSL 2, so commands go through
+    wsl as root. On Linux (including GitHub's test machines) and macOS,
+    Docker is called directly.
+    """
+    if sys.platform == "win32":
+        return ["wsl", "-u", "root", "--exec", "docker"]
+    return ["docker"]
+
+
+def docker_works(timeout=30):
+    """True if Docker answers a 'docker info' request."""
+    try:
+        result = subprocess.run(
+            docker_command() + ["info"],
+            capture_output=True,
+            timeout=timeout,
+        )
+        return result.returncode == 0
+    except Exception:
+        return False
+
+
 def _remove_container(name):
     subprocess.run(
-        ["wsl", "-u", "root", "--", "docker", "rm", "-f", name],
+        docker_command() + ["rm", "-f", name],
         capture_output=True,
     )
 
@@ -38,9 +63,8 @@ def run_python_detailed(code, timeout=5, keep_chars=KEEP_CHARS):
     """
     name = f"sandbox-{uuid.uuid4().hex[:12]}"
     inner = INNER_SCRIPT.format(timeout=timeout, cap=MAX_OUTPUT_BYTES + 1)
-    cmd = [
-        "wsl", "-u", "root", "--exec",
-        "docker", "run", "--rm", "-i",
+    cmd = docker_command() + [
+        "run", "--rm", "-i",
         "--name", name,
         "--network", "none",
         "--read-only",
