@@ -153,3 +153,7 @@ Difficulty	Reward	What it means for training
 - The sandbox image is pulled in its own step first, so a slow download cannot be mistaken for a timeout.
 - Local environment is Python 3.15 on Windows, so CI also checks a second Python version and a second operating system.
 - Findings from the first runs: (fill in)
+
+## Threat model written
+- environments/pyfunc/THREAT_MODEL.md: assets, adversary, trust boundary, 15 threats mapped to guard tests, residual risks, contributor rules.
+- Honest gaps recorded: dropped capabilities are not directly tested; exit-code-124 spoof is open; wrong-solution coverage is limited to the ones I wrote.

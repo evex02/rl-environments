@@ -69,7 +69,7 @@ Each row was found by writing a test that attacks the design, watching it succee
 - **One small model, one prompt, 20 episodes per task.** The baseline says little about other models or settings.
 - **Difficulty is not tuned.** Two tasks are close to the ceiling for this model, so they would give a trainer little signal.
 - **No training run yet.** I have not shown the reward is learnable or hard to exploit under training pressure.
-- **Docker is not a perfect security boundary.** It is strong enough for this project, and stronger isolation exists. A standalone threat model document is still to be written.
+- **Docker is not a perfect security boundary.** It is strong enough for this project, and stronger isolation exists. See [`THREAT_MODEL.md`](environments/pyfunc/THREAT_MODEL.md) for what is protected, what is tested, and what is still open.
 - **The baseline predates a grader change.** Timeouts are now retried once and the reason for each score is recorded. The saved results do not include those reasons.
 - `environments/pyfunc/DESIGN.md` is the first draft and no longer matches the implementation.
 
