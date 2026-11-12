@@ -135,3 +135,8 @@ Difficulty	Reward	What it means for training
 - Deleted the unsafe subprocess runner (run_code.py) and its tests, plus two one-off debug scripts. They remain in Git history.
 - Test count went from 124 passed + 1 xfailed to 121 passed + 1 xfailed, because 3 tests belonged to the deleted runner.
 - All scripts verified to import after the move (runpy check).
+
+## Moved out of OneDrive
+- Cloned a fresh copy and rebuilt .venv, instead of moving the folder (a venv hard-codes its location, and OneDrive can interfere with Git and thousands of small files).
+- Verified: pytest gives 121 passed, 1 xfailed, 0 skipped in the new location.
+- The sandbox does not depend on the project's location: code is piped into the container, and no host folders are mounted.
