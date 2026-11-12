@@ -162,3 +162,10 @@ Difficulty	Reward	What it means for training
 - Multi-turn tool use: generated table, Python tool in the same sandbox (stdlib only), up to 5 replies, final answer as `FINAL: <number>`, binary reward from a host-side reference.
 - Decisions: fresh container per code run; no correctness feedback before the end; invalid replies cost a turn; 3 starter tasks.
 - Design written before any code. Same method as pyfunc: oracle test, wrong-approach audit, cheat tests, then baseline.
+
+## analyst: reply parsing and task generators
+- Reply parsing (analyst_parsing.py): a reply is a tool call (one code block), a final answer (one FINAL line), or invalid (no_action, multiple_code_blocks, multiple_final, bad_number). FINAL wins over code in the same reply; FINAL text inside a code block does not count; the format is deliberately strict (uppercase FINAL:, plain decimal numbers only). The baseline will show whether this is too harsh.
+- Module names are prefixed analyst_ because pyfunc already has tasks.py, and two same-named modules on the path shadow each other.
+- Task generators (analyst_tasks.py): three tasks. Each episode carries decoys, the answers that wrong approaches would give. Episodes where a decoy lands within 0.05 of the truth are thrown away, so a wrong method cannot pass by coincidence. Same lesson as the palindrome task.
+- Independent check: tests recompute each answer from the CSV text with different code from the generator.
+- Tolerance is 0.01 on answers given to 2 decimal places.
