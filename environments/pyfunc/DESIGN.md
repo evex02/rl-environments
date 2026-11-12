@@ -1,5 +1,7 @@
 # pyfunc: design (draft v0.1)
 
+> **Status:** first draft, written before implementation. The grader and test inputs have since changed (see `docs/journal.md`). It is kept as a record of the original plan.
+
 ## What this environment is
 A single-turn coding environment. The AI is given a description of a small
 Python function. It replies with code. A sandbox runs that code against
