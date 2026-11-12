@@ -147,3 +147,9 @@ Difficulty	Reward	What it means for training
 - Tests (no Docker needed): the chosen command for win32, linux and darwin, and that the run command contains no wsl on Linux.
 - Caveat: I have only run this on Windows. The Linux path is untested until CI runs it. Expect the first CI run to possibly find Linux-only differences.
 - Risk noted: the 20 s backstop timer starts before docker run finishes. If the python:3.12-slim image has to be downloaded first, a slow download could be reported as a timeout. CI will pre-pull the image.
+
+## CI on GitHub Actions
+- Workflow runs the full suite on every push and pull request, on ubuntu-latest with Python 3.12, with REQUIRE_DOCKER=1 so missing Docker fails the run instead of skipping.
+- The sandbox image is pulled in its own step first, so a slow download cannot be mistaken for a timeout.
+- Local environment is Python 3.15 on Windows, so CI also checks a second Python version and a second operating system.
+- Findings from the first runs: (fill in)

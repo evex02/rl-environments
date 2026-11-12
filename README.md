@@ -1,5 +1,7 @@
 # RL environments for LLMs
 
+ ![tests](https://github.com/evex02/rl-environments/actions/workflows/tests.yml/badge.svg)  
+
 Open-source environments where an AI model writes code and is scored by running that code in a locked-down sandbox. The project is a work in progress, built to learn environment design for reinforcement learning on language models. It focuses on three things: sandboxing untrusted code, designing rewards that are right in both directions, and trying to break my own reward functions.
 
 **Status:** one environment (`pyfunc`) is working and tested. It has not been used for training yet, and it has only been tested on Windows with WSL 2. See [Limitations](#limitations).
@@ -63,7 +65,7 @@ Each row was found by writing a test that attacks the design, watching it succee
 
 ## Limitations
 
-- **Windows and WSL only.** The sandbox calls `wsl -u root -- docker ...`, so it has only been run on Windows with Docker Engine inside WSL 2 (Ubuntu). Linux and macOS support, and automated testing on GitHub, are planned.
+- **Tested on Windows (Docker in WSL 2) and on GitHub's Ubuntu runners.** The sandbox picks its Docker command by platform. macOS has not been tried.
 - **One small model, one prompt, 20 episodes per task.** The baseline says little about other models or settings.
 - **Difficulty is not tuned.** Two tasks are close to the ceiling for this model, so they would give a trainer little signal.
 - **No training run yet.** I have not shown the reward is learnable or hard to exploit under training pressure.
@@ -78,6 +80,7 @@ You need Python, Docker Engine inside WSL 2 (Ubuntu), and Ollama for the baselin
 ```
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
+docker pull python:3.12-slim
 .venv\Scripts\python -m pytest -rs
 ```
 
