@@ -177,3 +177,9 @@ Difficulty	Reward	What it means for training
 - The true answer never enters the sandbox program or any message (test with a sentinel value).
 - Tolerance: 0.01, compared with a 1e-9 allowance for floating-point rounding.
 - Next: the oracle test (a scripted model that runs the reference calculation through the real sandbox must score 1.0 on every task), then the wrong-approach audit and cheat tests.
+
+## analyst: oracle test (real sandbox)
+- A scripted solver (not an AI) reads the question, writes Python that calculates the answer from /tmp/data.csv, runs it through the real sandbox, and replies FINAL. It must score 1.0 on every task across 6 seeds. The oracle's code is written separately from the generators.
+- Negative control: the same oracle reporting an answer that is off by 0.5, or by 0.02, must score 0. This shows the 1.0 is not a vacuous pass from a loose tolerance.
+- Through the real loop: each tool run starts in a fresh container with the data file restored (tampering does not persist), crashes are reported, infinite loops are reported.
+- Limit: no retry on timeouts in this environment (the pyfunc grader has one).
