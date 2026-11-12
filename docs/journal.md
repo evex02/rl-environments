@@ -157,3 +157,8 @@ Difficulty	Reward	What it means for training
 ## Threat model written
 - environments/pyfunc/THREAT_MODEL.md: assets, adversary, trust boundary, 15 threats mapped to guard tests, residual risks, contributor rules.
 - Honest gaps recorded: dropped capabilities are not directly tested; exit-code-124 spoof is open; wrong-solution coverage is limited to the ones I wrote.
+
+## Second environment: analyst (design)
+- Multi-turn tool use: generated table, Python tool in the same sandbox (stdlib only), up to 5 replies, final answer as `FINAL: <number>`, binary reward from a host-side reference.
+- Decisions: fresh container per code run; no correctness feedback before the end; invalid replies cost a turn; 3 starter tasks.
+- Design written before any code. Same method as pyfunc: oracle test, wrong-approach audit, cheat tests, then baseline.
