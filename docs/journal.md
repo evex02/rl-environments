@@ -183,3 +183,12 @@ Difficulty	Reward	What it means for training
 - Negative control: the same oracle reporting an answer that is off by 0.5, or by 0.02, must score 0. This shows the 1.0 is not a vacuous pass from a loose tolerance.
 - Through the real loop: each tool run starts in a fresh container with the data file restored (tampering does not persist), crashes are reported, infinite loops are reported.
 - Limit: no retry on timeouts in this environment (the pyfunc grader has one).
+
+## analyst red-team round 1: cheats
+- Best fixed guess (chosen with hindsight over 1500 seeds, so an overestimate): mean_clean 0.80%, group_median 0.53%, pct_change 0.27%. Test threshold: under 2%. A control task with a constant answer scores 100%, so the measure can detect a leak.
+- Hedging with two FINAL lines: invalid, costs a turn, the episode continues and a clean answer still scores.
+- nan, inf, ranges, 1e3 and percentages: invalid, no score, episode continues.
+- FINAL text printed by the tool: never read as an answer. Control: the same text sent as a reply is accepted.
+- Searching the sandbox (environment variables, /proc command lines, /tmp, the harness's own variables) for the true answer finds nothing. A planted control confirms the scan can find a match.
+- Flooding the tool: reported to the model as too much output; the episode continues and a final answer still scores.
+- No reward holes found in this round. The tests remain as regression guards.
