@@ -192,3 +192,11 @@ Difficulty	Reward	What it means for training
 - Searching the sandbox (environment variables, /proc command lines, /tmp, the harness's own variables) for the true answer finds nothing. A planted control confirms the scan can find a match.
 - Flooding the tool: reported to the model as too much output; the episode continues and a final answer still scores.
 - No reward holes found in this round. The tests remain as regression guards.
+
+## analyst: first real model on the environment (smoke test, 3 episodes, llama3.2:1b)
+- Result: 0/3 (95% 0.00 to 0.56). Meaningless as a rate, so I read the transcripts instead (show_transcripts.py).
+- Model behaviour, all fair: code without fences; two code blocks per reply, repeated three times despite being told; reading the header row as data; FINAL guesses written alongside code before seeing any output. Final answers (0.00, 42.50, 0.23, 0.00) matched none of the wrong approaches. A lenient parser would still have scored all three 0.
+- Environment finding: a trivial program (sum of a ~20-row CSV) reported "ran out of time" on turn 1, then nearly identical code ran fine on turn 2. The second spurious timeout seen (the first: pyfunc merge_intervals episode 19). Cause unknown; hypothesis: memory/CPU pressure from the model, Docker and WSL together. The pyfunc grader retried timeouts; this environment did not.
+- Fix: a timed-out tool call is retried once (errors and floods never are); the model never sees the stalled attempt; retries are counted per episode (env.retries_used) and recorded in the baseline.
+- Also recorded now: replies cut off by the 600-token limit (finish_reason == "length"), because a cut-off reply loses its closing fence or FINAL line and would look like a format error.
+- Design question left open: `**FINAL:** 0.23` (markdown bold) is not recognised by the strict parser. Kept strict because the prompt names the exact form; to be decided from the counts in the real run.

@@ -285,3 +285,44 @@ def test_info_reports_what_happened():
         "tool_errors": 0,
         "invalid_replies": 1,
     }
+
+# --- a stall must not be blamed on the model's code ---
+
+def test_a_one_off_timeout_is_retried_and_the_model_sees_the_retry():
+    env, tool = new_env(FakeTool([("timeout", ""), ("ok", "42\n")]))
+    env.reset()
+    obs, _reward, _terminated, _truncated, info = env.step(code_reply())
+    assert len(tool.programs) == 2
+    assert "42" in obs
+    assert "ran out of time" not in obs
+    assert info["tool_runs"] == 1
+    assert info["tool_errors"] == 0
+    assert env.retries_used == 1
+
+
+def test_a_repeated_timeout_is_reported_after_one_retry():
+    env, tool = new_env(FakeTool([("timeout", "")]))
+    env.reset()
+    obs, _reward, _terminated, _truncated, info = env.step(code_reply())
+    assert len(tool.programs) == 2
+    assert "ran out of time" in obs
+    assert info["tool_errors"] == 1
+    assert env.retries_used == 1
+
+
+@pytest.mark.parametrize("status", ["error", "flood"])
+def test_errors_and_floods_are_never_retried(status):
+    env, tool = new_env(FakeTool([(status, "boom")]))
+    env.reset()
+    env.step(code_reply())
+    assert len(tool.programs) == 1
+    assert env.retries_used == 0
+
+
+def test_retries_are_counted_per_episode():
+    env, _ = new_env(FakeTool([("timeout", ""), ("ok", "1\n")]))
+    env.reset()
+    env.step(code_reply())
+    assert env.retries_used == 1
+    env.reset()
+    assert env.retries_used == 0

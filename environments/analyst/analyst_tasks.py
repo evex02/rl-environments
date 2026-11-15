@@ -29,7 +29,14 @@ def _mean_clean(rng):
             "mean_of_all_rows": round(sum(values) / n, 2),
             "missing_as_zero": round(sum(valid) / n, 2),
             "median_of_valid": round(statistics.median(valid), 2),
+            "skips_first_data_row": round(
+                statistics.mean([v for v in values[1:] if v != -999]), 2
+            ),
+            "skips_last_data_row": round(
+                statistics.mean([v for v in values[:-1] if v != -999]), 2
+            ),
         }
+        
         if _separated(answer, decoys):
             break
     rows = [(i + 1, v) for i, v in enumerate(values)]
@@ -98,6 +105,12 @@ def _group_median(rng):
 MONTHS = ["2025-01", "2025-02", "2025-03", "2025-04"]
 
 
+def _whole(total):
+    """Round a total to a whole number. Cleaning to one decimal first keeps
+    floating-point noise from flipping a total that is exactly x.5."""
+    return round(round(total, 1))
+
+
 def _pct_change(rng):
     while True:
         amounts = {
@@ -125,6 +138,9 @@ def _pct_change(rng):
             "divided_by_new_total": round((total_2 - total_1) / total_2 * 100, 2),
             "wrong_direction": round((total_1 - total_2) / total_1 * 100, 2),
             "ratio_without_subtracting_one": round(total_2 / total_1 * 100, 2),
+            "totals_rounded_to_whole_numbers": round(
+                (_whole(total_2) - _whole(total_1)) / _whole(total_1) * 100, 2
+            ),
         }
         if _separated(answer, decoys):
             break

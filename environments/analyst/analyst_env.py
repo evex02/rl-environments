@@ -7,6 +7,7 @@ from run_code_docker import run_python_detailed
 MAX_REPLIES = 5
 TOOL_TIMEOUT = 5
 TOOL_OUTPUT_CHARS = 2000
+MAX_TOOL_ATTEMPTS = 2  # one retry, and only for timeouts
 
 # This runs INSIDE the sandbox. It writes the data file, then runs the
 # model's code. The true answer is never in this program.
@@ -73,6 +74,7 @@ class AnalystEnv:
         self.tool_runs = 0
         self.tool_errors = 0
         self.invalid_replies = 0
+        self.retries_used = 0
 
     def _info(self, reason):
         return {
@@ -124,9 +126,18 @@ class AnalystEnv:
 
     def _run_tool(self, code):
         program = build_tool_program(self.episode["csv"], code)
-        status, output = self.run_tool(
-            program, timeout=TOOL_TIMEOUT, keep_chars=TOOL_OUTPUT_CHARS
-        )
+        attempts = 0
+        while True:
+            attempts += 1
+            status, output = self.run_tool(
+                program, timeout=TOOL_TIMEOUT, keep_chars=TOOL_OUTPUT_CHARS
+            )
+            # Only a timeout is retried: a stall on the machine can look like
+            # an infinite loop, but a retry never forgives an error or a flood.
+            if status == "timeout" and attempts < MAX_TOOL_ATTEMPTS:
+                self.retries_used += 1
+                continue
+            break
         self.tool_runs += 1
         if status != "ok":
             self.tool_errors += 1
