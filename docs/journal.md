@@ -200,3 +200,14 @@ Difficulty	Reward	What it means for training
 - Fix: a timed-out tool call is retried once (errors and floods never are); the model never sees the stalled attempt; retries are counted per episode (env.retries_used) and recorded in the baseline.
 - Also recorded now: replies cut off by the 600-token limit (finish_reason == "length"), because a cut-off reply loses its closing fence or FINAL line and would look like a format error.
 - Design question left open: `**FINAL:** 0.23` (markdown bold) is not recognised by the strict parser. Kept strict because the prompt names the exact form; to be decided from the counts in the real run.
+
+## analyst baseline v1 (llama3.2:1b, temperature 0.7, 600 max tokens, 10 per task, seeds from 200000)
+- Result: 1/30 passed (95% 0.01 to 0.17). mean_clean 1/10, group_median 0/10, pct_change 0/10. The run took about 2 hours.
+- Endings: 23 no_final, 6 wrong_answer (5 answered on turn 1 without running code), 1 pass.
+- Of the 23 no_final: 9 never sent a valid tool call, 8 got a clean tool result but never gave FINAL, 6 made tool calls but never got a clean result.
+- 63 invalid replies: 38 more than one code block, 24 neither block nor FINAL, 1 bad number. The model repeated the same mistake after being told, up to 3 times.
+- The model often printed "FINAL: x" from inside its own code. The environment correctly ignored it (the cheat tests require this), but the model seems to think it counts.
+- Strict parser: 44 replies in 15 scoring-0 episodes contained FINAL-like text that was not accepted; under a generous reading only 1 episode would be rescued (1/30 to 2/30). Strictness is not the main cause. The one pass had a code block and a FINAL line in the same reply, and passed because FINAL wins over code.
+- Tool runs: 44, of which 25 ended in the model's own errors. 7 first attempts timed out; all 7 recovered on the retry. That is about 14% of 51 launches, against roughly 1% in the pyfunc baseline. Cause unknown; untested hypotheses: memory pressure from longer conversations in Ollama, or WSL idling between calls. Without the retry, about 1 tool result in 6 would have wrongly told the model its code was too slow.
+- Conclusion: works end to end with a real model; strictness is not the problem; this model is too weak at multi-turn format for a learning signal. No claim about stronger models.
+- My predictions that missed: the run took 2 hours, not 1; the biggest no_final bucket was "never sent a valid tool call" (9), not "clean result but never FINAL" (8).
