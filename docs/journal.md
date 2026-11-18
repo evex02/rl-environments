@@ -211,3 +211,11 @@ Difficulty	Reward	What it means for training
 - Tool runs: 44, of which 25 ended in the model's own errors. 7 first attempts timed out; all 7 recovered on the retry. That is about 14% of 51 launches, against roughly 1% in the pyfunc baseline. Cause unknown; untested hypotheses: memory pressure from longer conversations in Ollama, or WSL idling between calls. Without the retry, about 1 tool result in 6 would have wrongly told the model its code was too slow.
 - Conclusion: works end to end with a real model; strictness is not the problem; this model is too weak at multi-turn format for a learning signal. No claim about stronger models.
 - My predictions that missed: the run took 2 hours, not 1; the biggest no_final bucket was "never sent a valid tool call" (9), not "clean result but never FINAL" (8).
+
+## analyst prompt experiment: v2 (written BEFORE the run)
+- Change: prompt v2 = v1 text plus a worked example at the end (a different task, a summed price column, with a FINAL answer of 777.77, a number no real episode can have; tested over 6000 episodes) and one sentence saying FINAL is written in the reply and is never something the code prints. v1 stays the default. Tests: v2 only adds to v1; the example is valid under the parser; the prompt version does not change the episodes.
+- Run: same model (llama3.2:1b), settings, seeds and tasks as baseline v1; 10 per task.
+- Primary measure: passes out of 30 (v1: 1). Secondary: invalid replies per episode (v1: 2.10), no_final episodes (v1: 23), episodes that never sent a valid tool call (v1: 9).
+- Prediction: 3 to 8 passes, invalid replies below 1.5 per episode, fewer than 18 no_final. If 2 passes or fewer: no meaningful change.
+- Limits: with n = 30, only a large change is detectable (6 passes vs 1: Fisher p about 0.10; 8 vs 1: p about 0.03). v2 was written after reading the v1 failures on these same episodes, so this is not a held-out test, although the change is generic format guidance. Run-to-run noise at temperature 0.7 was not measured.
+- Also to check afterwards: how often the model copies the example's code or its number.

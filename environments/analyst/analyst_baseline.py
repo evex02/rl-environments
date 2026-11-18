@@ -19,6 +19,12 @@ MAX_TOKENS = 600
 EVAL_SEED_START = 200_000
 
 
+def results_path(version):
+    """Each prompt version saves to its own file, so one run cannot overwrite another."""
+    name = "analyst_baseline.json" if version == "v1" else f"analyst_baseline_prompt_{version}.json"
+    return ROOT / "analysis" / name
+
+
 def summarise(records):
     """Per-task and overall results, with 95% intervals and diagnostics."""
     groups = {}
@@ -74,11 +80,12 @@ def play_episode(client, model, env):
         messages.append({"role": "user", "content": observation})
 
 
-def save_results(model, episodes, records):
-    out = ROOT / "analysis" / "analyst_baseline.json"
+def save_results(model, episodes, version, records):
+    out = results_path(version)
     out.parent.mkdir(exist_ok=True)
     data = {
         "model": model,
+        "prompt_version": version,
         "temperature": TEMPERATURE,
         "max_tokens": MAX_TOKENS,
         "episodes_per_task": episodes,
@@ -91,12 +98,17 @@ def save_results(model, episodes, records):
 def main():
     episodes = int(sys.argv[1]) if len(sys.argv) > 1 else 10
     model = sys.argv[2] if len(sys.argv) > 2 else "llama3.2:1b"
+    version = sys.argv[3] if len(sys.argv) > 3 else "v1"
     client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama", timeout=300)
 
     records = []
     for t_index, task in enumerate(TASKS):
         for i in range(episodes):
-            env = AnalystEnv(seed=EVAL_SEED_START + t_index * 1000 + i, tasks=[task])
+            env = AnalystEnv(
+                seed=EVAL_SEED_START + t_index * 1000 + i,
+                tasks=[task],
+                prompt_version=version,
+            )
             reward, info, transcript, cut_offs = play_episode(client, model, env)
             records.append(
                 {
@@ -114,10 +126,10 @@ def main():
                 f"({info['reason']}, {info['turns']} turns)",
                 flush=True,
             )
-            save_results(model, episodes, records)
+            save_results(model, episodes, version, records)
 
     print()
-    print(f"model: {model}, {episodes} episodes per task")
+    print(f"model: {model}, prompt {version}, {episodes} episodes per task")
     for name, s in summarise(records).items():
         print(
             f"{name:13s} pass {s['pass_rate']:.2f} (95% {s['low']:.2f} to {s['high']:.2f}) | "

@@ -9,6 +9,28 @@ TOOL_TIMEOUT = 5
 TOOL_OUTPUT_CHARS = 2000
 MAX_TOOL_ATTEMPTS = 2  # one retry, and only for timeouts
 
+PROMPT_VERSIONS = ("v1", "v2")
+
+# The worked example in prompt v2. It uses a different task and table. The
+# example answer is a number no real episode can have (a test checks this).
+EXAMPLE_ANSWER = 777.77
+EXAMPLE_CODE = (
+    "import csv\n"
+    "rows = list(csv.DictReader(open('/tmp/data.csv')))\n"
+    "print(sum(float(r['price']) for r in rows))"
+)
+EXAMPLE_FINAL_LINE = f"FINAL: {EXAMPLE_ANSWER}"
+EXAMPLE_SECTION = (
+    "\nHere is what replies look like. This example uses a different task and "
+    "a different table, so do not reuse its code or its number.\n\n"
+    "A reply that runs code is one code block and nothing else:\n"
+    "```python\n" + EXAMPLE_CODE + "\n```\n\n"
+    "You then see what it printed. When you are ready to answer, your reply "
+    "contains the line below as plain text. FINAL is written in your reply; it "
+    "is not something your code prints, and anything your code prints is never "
+    "treated as an answer:\n" + EXAMPLE_FINAL_LINE + "\n"
+)
+
 # This runs INSIDE the sandbox. It writes the data file, then runs the
 # model's code. The true answer is never in this program.
 HARNESS = r'''
@@ -25,10 +47,12 @@ INVALID_MESSAGES = {
 }
 
 
-def build_prompt(episode):
+def build_prompt(episode, version="v1"):
+    if version not in PROMPT_VERSIONS:
+        raise ValueError(f"unknown prompt version: {version!r}")
     lines = episode["csv"].splitlines()
     header, n_rows = lines[0], len(lines) - 1
-    return (
+    base = (
         "You are analysing a small data table using Python.\n\n"
         f"Question: {episode['question']}\n\n"
         f"The data is a CSV file at /tmp/data.csv. It has {n_rows} rows. "
@@ -44,6 +68,9 @@ def build_prompt(episode):
         "FINAL line by your last reply, you score 0. You will not be told "
         "whether your answer is right.\n"
     )
+    if version == "v2":
+        return base + EXAMPLE_SECTION
+    return base
 
 
 def build_tool_program(csv_text, code):
@@ -60,7 +87,10 @@ def replies_left_text(n):
 class AnalystEnv:
     """Multi-turn tool-use environment: analyse a table with Python, then answer."""
 
-    def __init__(self, seed=0, tasks=None, run_tool=None):
+    def __init__(self, seed=0, tasks=None, run_tool=None, prompt_version="v1"):
+        if prompt_version not in PROMPT_VERSIONS:
+            raise ValueError(f"unknown prompt version: {prompt_version!r}")
+        self.prompt_version = prompt_version
         self.rng = random.Random(seed)
         self.tasks = tasks or TASKS
         self.run_tool = run_tool or run_python_detailed
@@ -92,7 +122,7 @@ class AnalystEnv:
         self.episode = make_episode(self.task, episode_seed)
         self._reset_counters()
         self.done = False
-        return build_prompt(self.episode)
+        return build_prompt(self.episode, self.prompt_version)
 
     def step(self, reply):
         """Take one reply. Returns (observation, reward, terminated, truncated, info)."""
