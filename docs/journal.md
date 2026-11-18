@@ -219,3 +219,10 @@ Difficulty	Reward	What it means for training
 - Prediction: 3 to 8 passes, invalid replies below 1.5 per episode, fewer than 18 no_final. If 2 passes or fewer: no meaningful change.
 - Limits: with n = 30, only a large change is detectable (6 passes vs 1: Fisher p about 0.10; 8 vs 1: p about 0.03). v2 was written after reading the v1 failures on these same episodes, so this is not a held-out test, although the change is generic format guidance. Run-to-run noise at temperature 0.7 was not measured.
 - Also to check afterwards: how often the model copies the example's code or its number.
+
+## analyst prompt v2: result (llama3.2:1b, 10 per task, same seeds as v1)
+- Passes 0/30 (95% 0.00 to 0.11). v1: 1/30. By the pre-registered rule (2 or fewer = no meaningful change) the primary measure did not move.
+- Predictions: passes 3-8 (missed: 0); invalid replies below 1.5 per episode (missed narrowly: 1.57, v1 2.10); no_final below 18 (met: 5, v1 23).
+- Endings: 25 wrong_answer (v1: 6), 5 no_final (v1: 23). Mean turns 2.5 (v1: 4.2). Tool-error rate 0.33 overall (v1: 0.57). Retries 0 (v1: 7). Cut-offs 0.
+- Reading: v2 moved failures from "never answers" to "answers wrongly". Not a held-out test: v2 was written after reading the v1 failures on these same episodes. Cause of the wrong answers still unknown (next: diagnostic).
+- Unexplained: the run took about 20 minutes (v1: about 2 hours), with no stalls. Fewer model calls explain only part of the speed-up. Hypothesis, untested: the machine's state differed (power settings, background load), which would also explain the stalls.
