@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parents[2]
 for _folder in ("sandbox", "common"):
     sys.path.insert(0, str(ROOT / _folder))
 
-from analyst_baseline import EVAL_SEED_START
+from analyst_baseline import EVAL_SEED_START, results_path
 from analyst_env import AnalystEnv
 from analyst_tasks import TASKS
 
@@ -21,8 +21,8 @@ def show(text):
 
 
 def main():
-    path = ROOT / "analysis" / "analyst_baseline.json"
-    data = json.loads(path.read_text(encoding="utf-8"))
+    version = sys.argv[1] if len(sys.argv) > 1 else "v1"
+    data = json.loads(results_path(version).read_text(encoding="utf-8"))
     names = [t["name"] for t in TASKS]
     lines = []
     for r in data["records"]:
@@ -46,7 +46,8 @@ def main():
             lines.append(f"--- {message['role']} ---")
             lines.append(show(message["content"]))
         lines.append("")
-    out = ROOT / "analysis" / "transcripts.txt"
+    name = "transcripts.txt" if version == "v1" else f"transcripts_{version}.txt"
+    out = ROOT / "analysis" / name
     out.write_text("\n".join(lines), encoding="utf-8")
     print(f"Wrote {len(data['records'])} episodes to {out}")
 
