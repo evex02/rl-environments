@@ -1,3 +1,5 @@
+> **Status:** first draft, written before implementation. Changes since: a code reply on the last turn is not run; episode reasons are pass / wrong_answer / no_final, with invalid replies counted separately; the prompt gives the CSV header instead of a column description; timed-out tool runs are retried once; a second prompt version (v2) exists as an experiment. See `docs/journal.md`.
+
 # analyst: design (draft v0.1)
 
 ## What this environment is
