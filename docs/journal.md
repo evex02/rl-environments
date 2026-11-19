@@ -236,3 +236,17 @@ Difficulty	Reward	What it means for training
 - Conclusion: on llama3.2:1b both prompts give about 0 passes. v2 trades "never answers" for "answers without using the tool", which defeats the purpose of the environment. The oracle only shows the tasks are solvable by a scripted solver. Without a stronger model I cannot separate "environment too hard" from "model too weak".
 - Decision: stop prompt tuning. v1 is the reported baseline; v2 is reported as an experiment, flagged as written after reading the v1 failures on the same episodes.
 - Possible improvement (not made, because it changes the environment and needs new baselines): make the invalid-reply message say that code must be inside a fenced block.
+
+## pyfunc baseline re-run (predictions written BEFORE the run)
+- Same model (llama3.2:1b), settings, prompts and seeds as the 85/100 run, 20 per task. The grader has since gained a timeout retry and a recorded reason per score.
+- Predictions: overall 79 to 91 passes out of 100; between 6 and 18 episodes change result between the two runs, mostly in second_largest and fizzbuzz_list; palindrome and merge_intervals stay near the ceiling; 0 to 3 episodes scored as a timeout; a handful at most with a retried timeout.
+- Purpose: report numbers produced by the code as it now stands, and measure run-to-run noise.
+
+## pyfunc baseline re-run: result (llama3.2:1b, temperature 0.7, 20 per task, same seeds and prompts as the first run)
+- New run: 80/100 (95% 0.71 to 0.87). First run: 85/100 (0.77 to 0.91). Per task, first run to new run: is_palindrome 20 to 20, second_largest 11 to 8, run_length_encode 19 to 20, fizzbuzz_list 17 to 14, merge_intervals 18 to 18.
+- Run-to-run noise: 23 of 100 episodes changed result (14 lost, 9 gained); 18 of the 23 were in second_largest and fizzbuzz_list. Exact sign test: p about 0.4. The two runs cannot be told apart, and differences of a few passes on one task are within noise at 20 episodes per task. The runs share their questions, so they are not independent and are not pooled.
+- Predictions: 79-91 passes (met: 80); 6-18 episodes changing (missed: 23); changes mostly in second_largest and fizzbuzz_list (met); palindrome and merge_intervals near the ceiling (met); 0-3 scored as timeouts (met: 0); retried timeouts "a handful at most" (missed: 9).
+- Audit of the 20 failures (audit_failures.py): all honest model errors; no NO MISMATCH FOUND. second_largest 12 (7 on the guaranteed input [1, 2], 1 on [4], 2 crashes in the model's own code, 2 other wrong values); fizzbuzz_list 6 (3 on the guaranteed input 15, 1 crash in the model's own code, 2 other wrong lists); merge_intervals 2 (IndexError, NameError in the model's own code).
+- Stalls: 9 episodes had a timeout that was retried, and all 9 recovered (0 ended as a timeout). That is about 8% of episodes, 4 of the 9 passed after the retry. CORRECTION: I wrote earlier that the pyfunc rate was roughly 1%. That was one flagged episode in about 150, and stalls on replies that were wrong anyway would have been invisible to that audit. The analyst runs showed about 14%. The rate has risen since the first runs; cause unknown. Untested hypotheses: the laptop's state (power plan, memory, background load) or WSL/Docker memory use.
+- Retry: the timeout retry is doing real work. Without it, up to 4 episodes would have wrongly scored 0.
+- The first run's results are kept as analysis/pyfunc_baseline_before_reasons.json.
