@@ -250,3 +250,7 @@ Difficulty	Reward	What it means for training
 - Stalls: 9 episodes had a timeout that was retried, and all 9 recovered (0 ended as a timeout). That is about 8% of episodes, 4 of the 9 passed after the retry. CORRECTION: I wrote earlier that the pyfunc rate was roughly 1%. That was one flagged episode in about 150, and stalls on replies that were wrong anyway would have been invisible to that audit. The analyst runs showed about 14%. The rate has risen since the first runs; cause unknown. Untested hypotheses: the laptop's state (power plan, memory, background load) or WSL/Docker memory use.
 - Retry: the timeout retry is doing real work. Without it, up to 4 episodes would have wrongly scored 0.
 - The first run's results are kept as analysis/pyfunc_baseline_before_reasons.json.
+
+- Retry numbers (compare_baselines.py): 9 of 100 episodes (9.0%) had a first attempt that timed out and was retried (109 launches in total); 0 were still a timeout after the retry; 4 of the 9 passed. The other 5 failed on their merits.
+- My guess that most of the 9 would pass was wrong (4 of 9; 95% 0.19 to 0.73, too few to say whether stalls hit slower programs more often).
+- Correction: "about 8%" was 9 of 109 launches; per first attempt it is 9 of 100 (9.0%).
